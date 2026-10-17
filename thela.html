@@ -1,0 +1,866 @@
+<title>Thela</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%279%27 fill=%27%23C2410C%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-family=%27Arial,sans-serif%27 font-weight=%27700%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27%3Et%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Thela v2. Figma-style system (white canvas, pastel colour blocks, light display type, pill buttons)
+   with Thela's saffron on primary actions. Tokens: light on :root, dark under both dark selectors. */
+:root {
+  --bg: #FFFFFF; --surface: #FFFFFF; --soft: #F7F7F5;
+  --ink: #0B0B0A; --ink-2: #4A4844; --line: #E6E6E6; --line-soft: #F1F1F1;
+  --accent: #C2410C; --accent-hover: #A93A0B; --accent-ink: #FFFFFF; --accent-soft: #FDEADF;
+  --inverse: #0B0B0A; --inverse-ink: #F5F4F1; --inverse-ink-2: #A8A49D;
+  --phone: #111110; --placeholder: #7A766F;
+  --ok: #1E7F42; --err: #B42318; --tick: #1E8A45;
+  --blk-lime: #DCEEB1; --blk-lilac: #D6C8F7; --blk-marigold: #F7E4B8;
+  --blk-rose: #F2D5D2; --blk-mint: #C8E6CD; --blk-coral: #F3C9B6;
+  --blk-navy: #1F1D3D; --navy-ink: #F5F4F1; --navy-ink-2: #BDB9D6;
+  --note-shadow: 0 6px 18px -8px rgb(40 30 20 / .25);
+  --shadow: 0 18px 40px -18px rgb(40 30 20 / .28);
+  --sans: "Geist", "Noto Sans Devanagari", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --gutter: 24px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E0E0D; --surface: #151514; --soft: #181816;
+    --ink: #F2F1EE; --ink-2: #ABA7A0; --line: #2B2A27; --line-soft: #1F1E1C;
+    --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418;
+    --inverse: #1B1A18; --inverse-ink: #F2F1EE; --inverse-ink-2: #A8A49D;
+    --phone: #2E2C2A; --placeholder: #8F8A83;
+    --ok: #4ADE80; --err: #F87171; --tick: #4ADE80;
+    --blk-lime: #27311A; --blk-lilac: #2A2442; --blk-marigold: #362C18;
+    --blk-rose: #3A2524; --blk-mint: #1C3122; --blk-coral: #3B261D;
+    --blk-navy: #1E1C3F; --navy-ink: #F2F1EE; --navy-ink-2: #B3AFCF;
+    --note-shadow: 0 6px 18px -8px rgb(0 0 0 / .6);
+    --shadow: 0 18px 40px -18px rgb(0 0 0 / .7);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E0E0D; --surface: #151514; --soft: #181816;
+  --ink: #F2F1EE; --ink-2: #ABA7A0; --line: #2B2A27; --line-soft: #1F1E1C;
+  --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418;
+  --inverse: #1B1A18; --inverse-ink: #F2F1EE; --inverse-ink-2: #A8A49D;
+  --phone: #2E2C2A; --placeholder: #8F8A83;
+  --ok: #4ADE80; --err: #F87171; --tick: #4ADE80;
+  --blk-lime: #27311A; --blk-lilac: #2A2442; --blk-marigold: #362C18;
+  --blk-rose: #3A2524; --blk-mint: #1C3122; --blk-coral: #3B261D;
+  --blk-navy: #1E1C3F; --navy-ink: #F2F1EE; --navy-ink-2: #B3AFCF;
+  --note-shadow: 0 6px 18px -8px rgb(0 0 0 / .6);
+  --shadow: 0 18px 40px -18px rgb(0 0 0 / .7);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { margin: 0; padding-bottom: 72px; background: var(--bg); color: var(--ink); font: 400 17px/1.5 var(--sans); overflow-x: hidden; }
+h1, h2, h3, p, ul, ol, figure, blockquote { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+h1, h2, h3 { text-wrap: balance; }
+a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+::selection { background: var(--accent); color: var(--accent-ink); }
+input { caret-color: var(--accent); }
+html { scrollbar-color: var(--line) transparent; }
+button { font: inherit; color: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+.ic { width: 1em; height: 1em; fill: currentColor; flex: none; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.wrap { width: 100%; max-width: 1240px; margin-inline: auto; padding-inline: var(--gutter); }
+.section { padding-block: 96px; }
+
+/* Type: light display, weight carries emphasis */
+.display { font-weight: 330; font-size: clamp(2.6rem, 5.4vw, 4.9rem); line-height: 1.02; letter-spacing: -0.035em; }
+.display strong { font-weight: 600; color: var(--accent); }
+.title { font-weight: 340; font-size: clamp(2rem, 4.2vw, 3.5rem); line-height: 1.06; letter-spacing: -0.03em; max-width: 20ch; }
+.lead { font-size: clamp(1.1rem, 1.6vw, 1.3rem); font-weight: 360; line-height: 1.45; color: var(--ink-2); max-width: 46ch; }
+.head { display: grid; gap: 16px; margin-bottom: 48px; }
+.small { font-size: 14px; color: var(--ink-2); }
+
+/* Buttons: pills only */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 24px; border-radius: 50px; border: 1px solid transparent; font-weight: 500; font-size: 17px; line-height: 1.2; text-decoration: none; white-space: nowrap; transition: transform .2s cubic-bezier(.16,1,.3,1), background-color .2s, border-color .2s; }
+.btn:active { transform: scale(.97); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--ink); }
+.btn-secondary:hover { background: var(--soft); }
+.btn-sm { min-height: 44px; padding: 8px 18px; font-size: 15px; }
+.btn .ic { font-size: 1.1em; }
+
+/* Pill toggles and tabs: selected looks like the primary button */
+.pills { display: inline-flex; gap: 4px; padding: 4px; border-radius: 50px; background: var(--soft); border: 1px solid var(--line); }
+.pill { display: inline-flex; align-items: center; min-height: 44px; border: 0; background: transparent; border-radius: 50px; padding: 8px 18px; font-size: 15px; font-weight: 500; white-space: nowrap; transition: background-color .2s, color .2s; }
+.pill:hover { background: var(--line-soft); }
+.pill[aria-selected="true"], .pill[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.pill .tag { font-size: 12px; font-weight: 600; margin-left: 6px; padding: 2px 8px; border-radius: 50px; background: var(--blk-lime); color: var(--ink); }
+
+/* Colour blocks (Figma signature) */
+.block { border-radius: 24px; padding: 48px; color: var(--ink); }
+.blk-lime { background: var(--blk-lime); } .blk-lilac { background: var(--blk-lilac); }
+.blk-marigold { background: var(--blk-marigold); } .blk-rose { background: var(--blk-rose); }
+.blk-mint { background: var(--blk-mint); } .blk-coral { background: var(--blk-coral); }
+.blk-navy { background: var(--blk-navy); color: var(--navy-ink); }
+
+/* Nav */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line-soft); }
+.nav-inner { height: 68px; display: flex; align-items: center; gap: 32px; }
+.brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; font-weight: 650; font-size: 1.35rem; letter-spacing: -0.04em; }
+.brand-mark { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1.05rem; font-weight: 700; line-height: 1; }
+.nav-links { display: flex; gap: 28px; margin-left: auto; }
+.nav-links a { text-decoration: none; font-size: 15px; font-weight: 450; color: var(--ink-2); }
+.nav-links a:hover { color: var(--ink); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 48px; align-items: center; padding-block: 56px 96px; }
+.hero > *, .persona > *, .after > * { min-width: 0; }
+.hero-copy { display: grid; gap: 24px; }
+.hero-copy > * { animation: rise .9s cubic-bezier(.16,1,.3,1) both; }
+.hero-copy > :nth-child(2) { animation-delay: .07s; } .hero-copy > :nth-child(3) { animation-delay: .14s; }
+.hero-stage { border-radius: 32px; padding: 40px 24px 28px; display: grid; justify-items: center; gap: 16px; animation: rise 1s .18s cubic-bezier(.16,1,.3,1) both; }
+.hero-note { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-2); }
+
+.hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.hero-cta .small { max-width: 32ch; }
+
+/* Application form (sits on the navy block) */
+.apply { display: grid; gap: 16px; width: 100%; max-width: 660px; }
+.apply-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { display: grid; gap: 6px; align-content: start; }
+.field label { font-size: 15px; font-weight: 500; color: var(--navy-ink); }
+.field small { font-size: 13px; color: var(--navy-ink-2); }
+.field input, .field select { width: 100%; min-height: 48px; border: 1px solid transparent; border-radius: 14px; background: #FFFFFF; color: #0B0B0A; font: 500 16px var(--sans); padding: 10px 14px; }
+.field input::placeholder { color: #7A766F; }
+.field input:focus-visible, .field select:focus-visible { outline: 3px solid #FB8A4C; outline-offset: 2px; }
+.consent { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; font-size: 14px; color: var(--navy-ink-2); }
+.consent input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: #FB8A4C; }
+.consent a { color: var(--navy-ink); }
+.apply-msg { min-height: 1.4em; font-size: 15px; font-weight: 500; color: var(--navy-ink); }
+.apply-msg.ok { color: #86EFAC; } .apply-msg.err { color: #FCA5A5; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Phone: a working mini store */
+.phone { width: 300px; max-width: 100%; border-radius: 44px; padding: 10px; background: var(--phone); box-shadow: var(--shadow); }
+.phone-sm { width: 272px; border-radius: 40px; }
+.screen { position: relative; overflow: hidden; border-radius: 34px; background: var(--surface); padding: 32px 16px 18px; min-height: 540px; }
+.phone-sm .screen { border-radius: 31px; min-height: 480px; }
+.store-top { display: grid; justify-items: center; gap: 2px; text-align: center; }
+.avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; background: var(--soft); }
+.avatar-ini { display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 650; font-size: 1.3rem; }
+.store-name { font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+.store-bio { font-size: 13px; color: var(--ink-2); }
+.store-social { display: flex; gap: 12px; margin-top: 8px; font-size: 1.1rem; color: var(--ink-2); }
+.store-list { display: grid; gap: 8px; margin-top: 20px; }
+.product { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; padding: 8px; border-radius: 14px; background: var(--soft); }
+.thumb { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--line); }
+.thumb-ic { display: grid; place-items: center; font-size: 1.4rem; background: var(--accent-soft); color: var(--accent); }
+.p-title { font-weight: 550; font-size: 13.5px; line-height: 1.25; }
+.p-meta { font-size: 12px; color: var(--ink-2); }
+.p-buy { border: 0; border-radius: 50px; padding: 7px 11px; min-height: 40px; font-size: 13px; font-weight: 600; background: var(--accent); color: var(--accent-ink); white-space: nowrap; transition: transform .2s; }
+.p-buy:active { transform: scale(.94); }
+span.p-buy { cursor: default; }
+.sheet { position: absolute; inset: auto 0 0 0; background: var(--surface); border-top: 1px solid var(--line); border-radius: 24px 24px 0 0; padding: 22px 18px 20px; box-shadow: 0 -18px 40px -20px rgb(0 0 0 / .35); transform: translateY(105%); transition: transform .45s cubic-bezier(.16,1,.3,1); }
+.sheet.open { transform: none; }
+.sheet-item { font-weight: 600; }
+.sheet-hint { font-size: 13px; color: var(--ink-2); margin: 4px 0 16px; }
+.sheet .btn { width: 100%; }
+.sheet-close { display: block; margin: 8px auto 0; border: 0; background: none; font-size: 14px; color: var(--ink-2); padding: 6px; }
+.sheet-done { display: none; text-align: center; padding: 6px 0 10px; }
+.sheet-done .ic { font-size: 2.6rem; color: var(--tick); }
+.sheet-done p { margin-top: 6px; font-weight: 500; }
+.sheet.paid .sheet-body { display: none; } .sheet.paid .sheet-done { display: block; }
+.sheet input { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font: 500 15px var(--sans); padding: 8px 12px; margin-bottom: 10px; }
+.sheet input::placeholder { color: var(--placeholder); }
+.sheet-qr { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+.sheet-qr svg { width: 88px; height: 88px; flex: none; padding: 6px; background: #FFFFFF; border-radius: 10px; fill: #0B0B0A; }
+.sheet-meta { display: grid; gap: 2px; font-size: 13px; }
+.sheet-meta b { font-size: 1.3rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.sheet-code { font-family: var(--mono); font-weight: 500; }
+.sheet-age { display: flex; gap: 8px; align-items: start; font-size: 12px; color: var(--ink-2); margin: -2px 0 10px; }
+.sheet .sheet-age input { width: 16px; height: 16px; min-height: 0; margin: 2px 0 0; padding: 0; flex: none; accent-color: var(--accent); }
+.sheet-tag { font-size: 12px; color: var(--ink-2); }
+
+/* Black strip: the one marquee */
+.strip { background: var(--inverse); color: var(--inverse-ink); overflow: hidden; padding-block: 22px; }
+.strip-track { display: flex; width: max-content; gap: 28px; align-items: center; animation: slide 50s linear infinite; }
+.strip-track li { display: flex; align-items: center; gap: 28px; font-size: clamp(1.25rem, 2.2vw, 1.75rem); font-weight: 330; letter-spacing: -0.02em; white-space: nowrap; }
+.strip-track .ic { color: var(--accent); font-size: .8em; }
+.strip:hover .strip-track { animation-play-state: paused; }
+
+/* Before / after */
+.ba-top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+.ba-top .head { margin: 0; }
+.ba-stage { position: relative; border-radius: 24px; background: var(--soft); border: 1px solid var(--line-soft); padding: 48px; min-height: 440px; display: grid; align-items: center; }
+.notes { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px 24px; max-width: 860px; margin-inline: auto; }
+.note { width: 250px; padding: 16px 18px; border-radius: 6px; box-shadow: var(--note-shadow); display: grid; gap: 8px; font-size: 16px; line-height: 1.35; color: var(--ink); }
+.note .ic { font-size: 1.3rem; }
+.note small { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-2); }
+.note:nth-child(1) { background: var(--blk-marigold); transform: rotate(-2.5deg); }
+.note:nth-child(2) { background: var(--blk-lilac); transform: rotate(1.8deg) translateY(10px); }
+.note:nth-child(3) { background: var(--blk-mint); transform: rotate(-1.2deg); }
+.note:nth-child(4) { background: var(--blk-rose); transform: rotate(2.4deg); }
+.note:nth-child(5) { background: var(--blk-lime); transform: rotate(-2deg) translateY(8px); }
+.note:nth-child(6) { background: var(--blk-coral); transform: rotate(1.4deg); }
+.after { display: grid; grid-template-columns: auto 1fr; gap: 48px; align-items: center; justify-content: center; }
+.after-card { width: 340px; max-width: 100%; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); padding: 24px; display: grid; gap: 14px; }
+.after-link { display: flex; align-items: center; gap: 10px; font-weight: 550; font-size: 1.1rem; }
+.after-link .ic { color: var(--accent); }
+.after-points { display: grid; gap: 18px; max-width: 420px; }
+.after-points li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; font-size: 1.05rem; }
+.after-points .ic { font-size: 1.4rem; color: var(--accent); margin-top: 2px; }
+.after-points b { font-weight: 600; display: block; }
+.ba-panel { animation: fade .45s cubic-bezier(.16,1,.3,1) both; }
+
+/* Before and after, side by side */
+.ba-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
+.ba-col { border-radius: 24px; padding: 32px; display: grid; gap: 24px; align-content: start; }
+.ba-today { background: var(--soft); border: 1px solid var(--line-soft); }
+.ba-thela { background: var(--blk-lime); }
+.ba-label { font-size: 1.35rem; font-weight: 550; letter-spacing: -0.02em; }
+.ba-today .notes { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.ba-today .note { width: auto; }
+.ba-thela .after-card { width: 100%; max-width: 380px; }
+
+/* Creator cards */
+.cr-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.cr-card { border-radius: 24px; padding: 24px; display: grid; gap: 10px; align-content: start; }
+.cr-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.cr-head .avatar { width: 48px; height: 48px; margin: 0; font-size: 1rem; }
+.cr-name { font-size: 1.2rem; font-weight: 600; letter-spacing: -0.01em; }
+.cr-role { font-size: 14px; color: var(--ink); opacity: .75; }
+.cr-card .product { background: var(--surface); }
+.cr-note { font-size: 15px; color: var(--ink); opacity: .82; margin-top: 4px; }
+.cr-you { border: 1px dashed color-mix(in srgb, var(--ink) 30%, transparent); align-content: center; gap: 16px; }
+.cr-you .btn { justify-self: start; }
+
+/* Creator switcher (old) */
+.tabs-scroll { overflow-x: auto; margin-bottom: 24px; scrollbar-width: none; }
+.tabs-scroll::-webkit-scrollbar { display: none; }
+.persona { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; animation: fade .45s cubic-bezier(.16,1,.3,1) both; }
+.persona-copy { display: grid; gap: 24px; }
+.persona-name { font-weight: 340; font-size: clamp(1.8rem, 3.4vw, 2.75rem); line-height: 1.08; letter-spacing: -0.03em; }
+.persona-name span { display: block; font-size: 1.05rem; font-weight: 450; letter-spacing: 0; color: var(--ink-2); margin-top: 8px; }
+.uses { display: grid; gap: 18px; }
+.uses li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
+.uses .ic-wrap { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); font-size: 1.3rem; color: var(--accent); }
+.uses b { font-weight: 600; display: block; }
+.uses p { color: var(--ink-2); font-size: 16px; }
+.persona blockquote { font-size: 1.15rem; font-weight: 400; line-height: 1.45; max-width: 44ch; }
+.persona figcaption { margin-top: 8px; font-size: 14px; color: var(--ink-2); }
+.persona-phone { display: grid; justify-items: center; }
+
+/* Features */
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.tile { border-radius: 24px; padding: 28px; background: var(--soft); display: flex; flex-direction: column; gap: 10px; min-height: 280px; }
+.tile.wide { grid-column: span 2; }
+.tile > .ic { font-size: 1.6rem; color: var(--accent); }
+.tile h3 { font-size: 1.35rem; font-weight: 550; letter-spacing: -0.02em; }
+.tile p { color: var(--ink-2); max-width: 42ch; }
+.mini { margin-top: auto; padding-top: 16px; }
+.mini-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 8px; max-width: 320px; font-size: 14px; }
+.mini-row { display: flex; justify-content: space-between; gap: 12px; }
+.mini-row span:first-child { color: var(--ink-2); }
+.mini-row b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.mini-btn { justify-self: start; margin-top: 4px; padding: 7px 14px; border-radius: 50px; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 13px; }
+.bubbles { display: grid; gap: 8px; max-width: 360px; }
+.bubble { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.35; background: var(--surface); border: 1px solid var(--line); justify-self: start; max-width: 90%; }
+.bubble.me { justify-self: end; background: var(--accent-soft); border-color: transparent; }
+.bubble small { display: block; font-size: 12px; color: var(--ink-2); margin-bottom: 2px; }
+.file { display: flex; align-items: center; gap: 8px; margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: var(--soft); font-weight: 550; }
+.file .ic { color: var(--accent); }
+.slots { display: flex; flex-wrap: wrap; gap: 6px; }
+.slots span { padding: 6px 12px; border-radius: 50px; background: var(--surface); border: 1px solid var(--line); font-size: 13px; font-weight: 550; font-variant-numeric: tabular-nums; }
+.slots .taken { text-decoration: line-through; color: var(--ink-2); opacity: .7; }
+.slots .picked { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.langs { display: flex; flex-wrap: wrap; gap: 8px; }
+.langs span { padding: 8px 16px; border-radius: 50px; background: var(--surface); border: 1px solid var(--line); font-size: 1.05rem; }
+.langs .on { background: var(--ink); color: var(--bg); border-color: transparent; }
+.planned { display: flex; flex-wrap: wrap; gap: 8px; }
+.planned span { padding: 6px 12px; border-radius: 50px; background: var(--surface); border: 1px dashed color-mix(in srgb, var(--ink) 30%, transparent); font-size: 14px; }
+.tile.t-marigold { background: var(--blk-marigold); } .tile.t-lilac { background: var(--blk-lilac); } .tile.t-mint { background: var(--blk-mint); }
+.tile.t-marigold p, .tile.t-lilac p, .tile.t-mint p { color: var(--ink); opacity: .82; }
+
+/* Pricing */
+.price-top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+.price-top .head { margin: 0; }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+.plan { border-radius: 24px; border: 1px solid var(--line); background: var(--surface); padding: 28px; display: flex; flex-direction: column; gap: 18px; }
+.plan.featured { border: 2px solid var(--accent); padding: 27px; }
+.plan-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.plan-name { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.02em; }
+.badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 50px; background: var(--accent-soft); color: var(--ink); }
+.plan-for { color: var(--ink-2); font-size: 15px; min-height: 2.9em; }
+.price { display: flex; align-items: baseline; gap: 6px; }
+.price-num { font-size: 3rem; font-weight: 330; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.price-per { color: var(--ink-2); font-size: 15px; }
+.price-sub:empty { display: none; }
+.price-sub { font-size: 14px; color: var(--ink-2); min-height: 1.4em; margin-top: -10px; }
+.cut { font-weight: 600; font-size: 15px; padding: 10px 14px; border-radius: 12px; background: var(--soft); }
+.plan .btn { width: 100%; }
+.plan-list { display: grid; gap: 10px; font-size: 15px; }
+.plan-list li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; }
+.plan-list .ic { font-size: 1.1rem; color: var(--tick); margin-top: 2px; }
+.plan-list .plus { font-weight: 600; grid-template-columns: 1fr; }
+
+.plans.one { grid-template-columns: 1fr 1fr; }
+.plan-side { border-radius: 24px; background: var(--soft); padding: 28px; display: grid; gap: 16px; align-content: start; }
+.plan-side h3 { font-size: 1.35rem; font-weight: 550; letter-spacing: -0.02em; }
+.plan-side ol { display: grid; gap: 12px; counter-reset: s; }
+.plan-side ol li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; counter-increment: s; }
+.plan-side ol li::before { content: counter(s); font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+.plan-list .ic.x { color: var(--ink-2); }
+.plan-list .plan-sub { grid-template-columns: 1fr; font-weight: 600; font-size: 15px; margin-top: 4px; }
+.breakeven { font-size: 15px; color: var(--ink-2); }
+.fine { margin-top: 16px; font-size: 13px; color: var(--ink-2); max-width: 80ch; }
+
+/* Steps */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; counter-reset: step; }
+.steps li { display: grid; gap: 10px; padding-top: 24px; border-top: 1px solid var(--ink); }
+.step-num { font-size: 3.5rem; font-weight: 300; line-height: 1; letter-spacing: -0.04em; color: var(--accent); font-variant-numeric: tabular-nums; }
+.steps h3 { font-size: 1.35rem; font-weight: 550; letter-spacing: -0.02em; }
+.steps p { color: var(--ink-2); max-width: 32ch; }
+
+/* FAQ */
+.faq { display: grid; grid-template-columns: .75fr 1.25fr; gap: 48px; align-items: start; }
+.faq-list details { border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+.faq-list summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; padding: 20px 0; font-weight: 550; font-size: 1.1rem; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary .ic { font-size: 1.1rem; margin-top: 4px; transition: transform .3s; }
+.faq-list details[open] summary .ic { transform: rotate(180deg); }
+.faq-list details p { padding-bottom: 20px; max-width: 58ch; opacity: .85; }
+
+/* Closing */
+.closing { display: grid; gap: 28px; justify-items: start; padding: 72px 48px; }
+.closing .title { max-width: 16ch; }
+.closing .lead { color: var(--navy-ink-2); }
+#apply { padding-bottom: 96px; }
+.closing .btn-primary { background: #FB8A4C; color: #1A0F08; }
+.closing .btn-primary:hover { background: #FFA06A; }
+
+/* Footer */
+.footer { background: var(--inverse); color: var(--inverse-ink-2); padding-block: 48px; font-size: 15px; }
+.footer-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 32px; }
+.footer .brand { color: var(--inverse-ink); }
+.footer nav { display: flex; flex-wrap: wrap; gap: 20px; }
+.footer nav a { text-decoration: none; } .footer nav a:hover { color: var(--inverse-ink); }
+.footer p { margin-left: auto; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes slide { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .strip { overflow-x: auto; }
+  html { scroll-behavior: auto; }
+}
+
+@media (max-width: 1000px) {
+  .hero, .persona, .faq, .after, .ba-grid { grid-template-columns: 1fr; }
+  .cr-grid { grid-template-columns: 1fr 1fr; }
+  .hero { gap: 40px; padding-top: 32px; }
+  .plans, .plans.one { grid-template-columns: 1fr; max-width: 560px; margin-inline: auto; }
+  .feat-grid { grid-template-columns: 1fr 1fr; }
+  .tile.wide { grid-column: span 2; }
+  .after { justify-items: center; gap: 32px; }
+  .persona-phone { order: 2; }
+}
+@media (max-width: 768px) {
+  .section { padding-block: 64px; }
+  .block { border-radius: 0; margin-inline: calc(-1 * var(--gutter)); padding: 40px var(--gutter); }
+  .hero-stage { border-radius: 24px; }
+  .closing { padding: 56px var(--gutter); }
+  #apply { padding-bottom: 64px; }
+  .ba-stage { padding: 32px 16px; }
+  .steps { grid-template-columns: 1fr; gap: 24px; }
+  .price-top, .ba-top { align-items: start; }
+}
+@media (max-width: 640px) {
+  :root { --gutter: 16px; }
+  .nav-links { display: none; }
+  .nav-inner { justify-content: space-between; }
+  .head { margin-bottom: 32px; }
+  .apply-grid { grid-template-columns: 1fr; }
+  .apply .btn { width: 100%; }
+  .hero-cta .btn { width: 100%; }
+  .feat-grid, .cr-grid { grid-template-columns: 1fr; }
+  .ba-col { padding: 24px 16px; }
+  .ba-today .notes { gap: 12px; }
+  .tile.wide { grid-column: auto; }
+  .tile { padding: 24px; min-height: 0; }
+  .notes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .note { width: auto; padding: 12px; font-size: 14px; gap: 6px; }
+  .note small { font-size: 11px; }
+  .plan { padding: 24px; } .plan.featured { padding: 23px; }
+  .plan-side { padding: 24px; }
+  .footer p { margin-left: 0; width: 100%; }
+  .pills { max-width: 100%; }
+  .hero-stage { padding: 28px 12px 20px; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ig" viewBox="0 0 256 256"><path d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"/></symbol>
+  <symbol id="i-yt" viewBox="0 0 256 256"><path d="M164.44,121.34l-48-32A8,8,0,0,0,104,96v64a8,8,0,0,0,12.440,6.66l48-32a8,8,0,0,0,0-13.32ZM120,145.05V111l25.58,17ZM234.33,69.52a24,24,0,0,0-14.49-16.4C185.56,39.88,131,40,128,40s-57.56-.12-91.84,13.12a24,24,0,0,0-14.49,16.4C19.08,79.5,16,97.74,16,128s3.08,48.5,5.67,58.48a24,24,0,0,0,14.49,16.41C69,215.56,120.4,216,127.34,216h1.32c6.94,0,58.37-.44,91.18-13.11a24,24,0,0,0,14.49-16.41c2.59-10,5.67-28.220,5.67-58.48S236.92,79.5,234.33,69.52Zm-15.49,113a8,8,0,0,1-4.77,5.49c-31.65,12.22-85.48,12-86,12H128c-.54,0-54.33.2-86-12a8,8,0,0,1-4.77-5.49C34.8,173.39,32,156.57,32,128s2.8-45.39,5.16-54.47A8,8,0,0,1,41.93,68c30.52-11.790,81.66-12,85.85-12h.27c.54,0,54.38-.18,86,12a8,8,0,0,1,4.770,5.49C221.2,82.61,224,99.43,224,128S221.2,173.39,218.84,182.47Z"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 256 256"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L101,118a8,8,0,0,0-.73,7.51,56.47,56.47,0,0,0,30.15,30.15A8,8,0,0,0,138,155l14.61-9.74,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.050-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/></symbol>
+  <symbol id="i-tap" viewBox="0 0 256 256"><path d="M56,76a60,60,0,0,1,120,0,8,8,0,0,1-16,0,44,44,0,0,0-88,0,8,8,0,1,1-16,0Zm140,44a27.9,27.9,0,0,0-13.36,3.39A28,28,0,0,0,144,106.7V76a28,28,0,0,0-56,0v80l-3.82-6.13a28,28,0,0,0-48.41,28.17l29.32,50A8,8,0,1,0,78.89,220L49.6,170a12,12,0,1,1,20.78-12l.14.23,18.68,30A8,8,0,0,0,104,184V76a12,12,0,0,1,24,0v68a8,8,0,1,0,16,0V132a12,12,0,0,1,24,0v20a8,8,0,0,0,16,0v-4a12,12,0,0,1,24,0v36c0,21.61-7.1,36.3-7.16,36.42a8,8,0,0,0,3.58,10.73A7.9,7.9,0,0,0,208,232a8,8,0,0,0,7.16-4.42c.37-.73,8.85-18,8.85-43.58V148A28,28,0,0,0,196,120Z"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 256 256"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></symbol>
+  <symbol id="i-play" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48.24-94.78-64-40A8,8,0,0,0,100,88v80a8,8,0,0,0,12.24,6.78l64-40a8,8,0,0,0,0-13.56ZM116,153.57V102.43L156.91,128Z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Zm-38.34-85.66a8,8,0,0,1,0,11.32l-48,48a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L116,164.69l42.34-42.35A8,8,0,0,1,169.66,122.34Z"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 256 256"><path d="M230.9,73.6A15.85,15.85,0,0,0,212,77.39l-33.67,36.29-35.8-80.29a1,1,0,0,1,0-.1,16,16,0,0,0-29.06,0,1,1,0,0,1,0,.1l-35.8,80.29L44,77.39A16,16,0,0,0,16.25,90.81c0,.11,0,.21.07.32L39,195a16,16,0,0,0,15.72,13H201.29A16,16,0,0,0,217,195L239.68,91.13c0-.11,0-.21.07-.32A15.85,15.85,0,0,0,230.9,73.6ZM201.35,191.68l-.06.32H54.71l-.06-.32L32,88l.14.16,42,45.24a8,8,0,0,0,13.18-2.18L128,40l40.69,91.25a8,8,0,0,0,13.18,2.18l42-45.24L224,88Z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 256 256"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48ZM203.43,64,128,133.15,52.57,64ZM216,192H40V74.19l82.59,75.71a8,8,0,0,0,10.82,0L216,74.19V192Z"/></symbol>
+  <symbol id="i-at" viewBox="0 0 256 256"><path d="M128,24a104,104,0,0,0,0,208c21.51,0,44.1-6.48,60.43-17.33a8,8,0,0,0-8.86-13.33C166,210.38,146.21,216,128,216a88,88,0,1,1,88-88c0,26.45-10.88,32-20,32s-20-5.550-20-32V88a8,8,0,0,0-16,0v4.26a48,48,0,1,0,5.93,65.1c6,12,16.35,18.64,30.07,18.64,22.54,0,36-17.94,36-48A104.11,104.11,0,0,0,128,24Zm0,136a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"/></symbol>
+  <symbol id="i-pkg" viewBox="0 0 256 256"><path d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32l80.34,44-29.77,16.3-80.35-44ZM128,120,47.66,76l33.9-18.56,80.34,44ZM40,90l80,43.78v85.79L40,175.82Zm176,85.78h0l-80,43.79V133.82l32-17.51V152a8,8,0,0,0,16,0V107.55L216,90v85.77Z"/></symbol>
+  <symbol id="i-share" viewBox="0 0 256 256"><path d="M176,160a39.89,39.89,0,0,0-28.62,12.09l-46.1-29.63a39.8,39.8,0,0,0,0-28.92l46.1-29.63a40,40,0,1,0-8.66-13.45l-46.1,29.63a40,40,0,1,0,0,55.82l46.1,29.63A40,40,0,1,0,176,160Zm0-128a24,24,0,1,1-24,24A24,24,0,0,1,176,32ZM64,152a24,24,0,1,1,24-24A24,24,0,0,1,64,152Zm112,72a24,24,0,1,1,24-24A24,24,0,0,1,176,224Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 256 256"><path d="M232,48H160a40,40,0,0,0-32,16A40,40,0,0,0,96,48H24a8,8,0,0,0-8,8V200a8,8,0,0,0,8,8H96a24,24,0,0,1,24,24,8,8,0,0,0,16,0,24,24,0,0,1,24-24h72a8,8,0,0,0,8-8V56A8,8,0,0,0,232,48ZM96,192H32V64H96a24,24,0,0,1,24,24V200A39.81,39.81,0,0,0,96,192Zm128,0H160a39.81,39.81,0,0,0-24,8V88a24,24,0,0,1,24-24h64Z"/></symbol>
+  <symbol id="i-video" viewBox="0 0 256 256"><path d="M251.77,73a8,8,0,0,0-8.21.39L208,97.05V72a16,16,0,0,0-16-16H32A16,16,0,0,0,16,72V184a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V159l35.56,23.71A8,8,0,0,0,248,184a8,8,0,0,0,8-8V80A8,8,0,0,0,251.77,73ZM192,184H32V72H192V184Zm48-22.95-32-21.33V116.28L240,95Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 256 256"><path d="M144.27,45.93a8,8,0,0,1,9.8-5.66,86.22,86.22,0,0,1,61.66,61.66,8,8,0,0,1-5.66,9.8A8.23,8.23,0,0,1,208,112a8,8,0,0,1-7.73-5.94,70.35,70.35,0,0,0-50.330-50.33A8,8,0,0,1,144.27,45.93Zm-2.33,41.8c13.79,3.68,22.65,12.54,26.33,26.33A8,8,0,0,0,176,120a8.23,8.23,0,0,0,2.07-.27,8,8,0,0,0,5.66-9.8c-5.12-19.16-18.5-32.54-37.66-37.66a8,8,0,1,0-4.13,15.46Zm81.94,95.35A56.26,56.26,0,0,1,168,232C88.6,232,24,167.4,24,88A56.26,56.26,0,0,1,72.92,32.12a16,16,0,0,1,16.62,9.52l21.12,47.15,0,.12A16,16,0,0,1,109.39,104c-.18.27-.37.52-.57.77L88,129.45c7.49,15.22,23.41,31,38.83,38.51l24.34-20.71a8.12,8.12,0,0,1,.75-.56,16,16,0,0,1,15.17-1.4l.13.06,47.11,21.11A16,16,0,0,1,223.88,183.08Zm-15.88-2s-.07,0-.11,0h0l-47-21.05-24.35,20.71a8.44,8.44,0,0,1-.74.56,16,16,0,0,1-15.75,1.14c-18.73-9.05-37.4-27.58-46.46-46.11a16,16,0,0,1,1-15.7,6.13,6.13,0,0,1,.57-.77L96,95.15l-21-47a.61.61,0,0,1,0-.12A40.2,40.2,0,0,0,40,88,128.14,128.14,0,0,0,168,216,40.210,40.21,0,0,0,208,181.07Z"/></symbol>
+  <symbol id="i-inr" viewBox="0 0 256 256"><path d="M208,80a8,8,0,0,1-8,8H167.85c.09,1.32.15,2.65.15,4a60.07,60.07,0,0,1-60,60H92.69l72.69,66.08a8,8,0,1,1-10.76,11.84l-88-80A8,8,0,0,1,72,136h36a44.05,44.05,0,0,0,44-44c0-1.35-.07-2.680-.19-4H72a8,8,0,0,1,0-16h75.17A44,44,0,0,0,108,48H72a8,8,0,0,1,0-16H200a8,8,0,0,1,0,16H148.74a60.13,60.13,0,0,1,15.82,24H200A8,8,0,0,1,208,80Z"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 256 256"><path d="M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z"/></symbol>
+  <symbol id="i-dm" viewBox="0 0 256 256"><path d="M140,128a12,12,0,1,1-12-12A12,12,0,0,1,140,128ZM84,116a12,12,0,1,0,12,12A12,12,0,0,0,84,116Zm88,0a12,12,0,1,0,12,12A12,12,0,0,0,172,116Zm60,12A104,104,0,0,1,79.12,219.82L45.07,231.17a16,16,0,0,1-20.24-20.24l11.35-34.05A104,104,0,1,1,232,128Zm-16,0A88,88,0,1,0,51.810,172.06a8,8,0,0,1,.66,6.54L40,216,77.4,203.53a7.85,7.85,0,0,1,2.53-.42,8,8,0,0,1,4,1.08A88,88,0,0,0,216,128Z"/></symbol>
+  <symbol id="i-lang" viewBox="0 0 256 256"><path d="M247.15,212.42l-56-112a8,8,0,0,0-14.31,0l-21.71,43.43A88,88,0,0,1,108,126.93,103.65,103.65,0,0,0,135.69,64H160a8,8,0,0,0,0-16H104V32a8,8,0,0,0-16,0V48H32a8,8,0,0,0,0,16h87.63A87.76,87.76,0,0,1,96,116.35a87.74,87.74,0,0,1-19-31,8,8,0,1,0-15.08,5.34A103.63,103.63,0,0,0,84,127a87.55,87.55,0,0,1-52,17,8,8,0,0,0,0,16,103.46,103.46,0,0,0,64-22.08,104.18,104.18,0,0,0,51.44,21.31l-26.6,53.19a8,8,0,0,0,14.31,7.16L148.94,192h70.11l13.79,27.58A8,8,0,0,0,240,224a8,8,0,0,0,7.15-11.58ZM156.94,176,184,121.89,211.05,176Z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 256 256"><path d="M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1-7.37-4.89,8,8,0,0,1,0-6.22A8,8,0,0,1,192,112a24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.84,8,57,57,0,0,0-98.16,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"/></symbol>
+  <symbol id="i-caret" viewBox="0 0 256 256"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></symbol>
+  <symbol id="i-ast" viewBox="0 0 256 256"><path d="M214.86,180.12a8,8,0,0,1-11,2.74L136,142.13V216a8,8,0,0,1-16,0V142.13L52.12,182.86a8,8,0,1,1-8.23-13.72L112.45,128,43.89,86.86a8,8,0,1,1,8.23-13.72L120,113.87V40a8,8,0,0,1,16,0v73.87l67.88-40.73a8,8,0,1,1,8.23,13.72L143.55,128l68.56,41.14A8,8,0,0,1,214.86,180.12Z"/></symbol>
+  <symbol id="i-tick" viewBox="0 0 256 256"><path d="M229.66,77.66l-128,128a8,8,0,0,1-11.32,0l-56-56a8,8,0,0,1,11.32-11.32L96,188.69,218.34,66.34a8,8,0,0,1,11.32,11.32Z"/></symbol>
+  <symbol id="i-renew" viewBox="0 0 256 256"><path d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h28.69L182.06,73.37a79.56,79.56,0,0,0-56.13-23.43h-.45A79.52,79.52,0,0,0,69.59,72.71,8,8,0,0,1,58.41,61.27a96,96,0,0,1,135,.79L208,76.69V48a8,8,0,0,1,16,0ZM186.41,183.29a80,80,0,0,1-112.47-.66L59.31,168H88a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V179.31l14.63,14.63A95.43,95.43,0,0,0,130,222.06h.53a95.36,95.36,0,0,0,67.07-27.33,8,8,0,0,0-11.18-11.44Z"/></symbol>
+  <symbol id="i-img" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></symbol>
+  <symbol id="i-form" viewBox="0 0 256 256"><path d="M168,152a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,152Zm-8-40H96a8,8,0,0,0,0,16h64a8,8,0,0,0,0-16Zm56-64V216a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V48A16,16,0,0,1,56,32H92.26a47.92,47.92,0,0,1,71.48,0H200A16,16,0,0,1,216,48ZM96,64h64a32,32,0,0,0-64,0ZM200,48H173.25A47.93,47.93,0,0,1,176,64v8a8,8,0,0,1-8,8H88a8,8,0,0,1-8-8V64a47.93,47.93,0,0,1,2.75-16H56V216H200Z"/></symbol>
+  <symbol id="i-link" viewBox="0 0 256 256"><path d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/></symbol>
+  <symbol id="i-tg" viewBox="0 0 256 256"><path d="M228.88,26.19a9,9,0,0,0-9.16-1.57L17.06,103.93a14.22,14.22,0,0,0,2.43,27.21L72,141.45V200a15.92,15.92,0,0,0,10,14.83,15.91,15.91,0,0,0,17.51-3.73l25.32-26.26L165,220a15.88,15.88,0,0,0,10.510,4,16.3,16.3,0,0,0,5-.79,15.85,15.85,0,0,0,10.67-11.63L231.77,35A9,9,0,0,0,228.88,26.19Zm-61.14,36L78.15,126.35l-49.6-9.73ZM88,200V152.52l24.79,21.74Zm87.53,8L92.85,135.5l119-85.29Z"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128Z"/></symbol>
+<symbol id="i-qr" viewBox="0 0 25 25"><path d="M0 0h1v1h-1zM1 0h1v1h-1zM2 0h1v1h-1zM3 0h1v1h-1zM4 0h1v1h-1zM5 0h1v1h-1zM6 0h1v1h-1zM13 0h1v1h-1zM14 0h1v1h-1zM18 0h1v1h-1zM19 0h1v1h-1zM20 0h1v1h-1zM21 0h1v1h-1zM22 0h1v1h-1zM23 0h1v1h-1zM24 0h1v1h-1zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM9 1h1v1h-1zM10 1h1v1h-1zM11 1h1v1h-1zM12 1h1v1h-1zM18 1h1v1h-1zM24 1h1v1h-1zM0 2h1v1h-1zM2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM6 2h1v1h-1zM8 2h1v1h-1zM9 2h1v1h-1zM10 2h1v1h-1zM13 2h1v1h-1zM15 2h1v1h-1zM18 2h1v1h-1zM20 2h1v1h-1zM21 2h1v1h-1zM22 2h1v1h-1zM24 2h1v1h-1zM0 3h1v1h-1zM2 3h1v1h-1zM3 3h1v1h-1zM4 3h1v1h-1zM6 3h1v1h-1zM9 3h1v1h-1zM10 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM14 3h1v1h-1zM16 3h1v1h-1zM18 3h1v1h-1zM20 3h1v1h-1zM21 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM0 4h1v1h-1zM2 4h1v1h-1zM3 4h1v1h-1zM4 4h1v1h-1zM6 4h1v1h-1zM11 4h1v1h-1zM13 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM24 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM12 5h1v1h-1zM13 5h1v1h-1zM15 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM0 6h1v1h-1zM1 6h1v1h-1zM2 6h1v1h-1zM3 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM11 6h1v1h-1zM13 6h1v1h-1zM14 6h1v1h-1zM15 6h1v1h-1zM18 6h1v1h-1zM19 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM23 6h1v1h-1zM24 6h1v1h-1zM12 7h1v1h-1zM14 7h1v1h-1zM15 7h1v1h-1zM5 8h1v1h-1zM10 8h1v1h-1zM11 8h1v1h-1zM12 8h1v1h-1zM13 8h1v1h-1zM14 8h1v1h-1zM15 8h1v1h-1zM18 8h1v1h-1zM19 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM23 8h1v1h-1zM0 9h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM6 9h1v1h-1zM9 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM15 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM22 9h1v1h-1zM23 9h1v1h-1zM24 9h1v1h-1zM0 10h1v1h-1zM1 10h1v1h-1zM2 10h1v1h-1zM3 10h1v1h-1zM4 10h1v1h-1zM8 10h1v1h-1zM14 10h1v1h-1zM15 10h1v1h-1zM1 11h1v1h-1zM5 11h1v1h-1zM6 11h1v1h-1zM7 11h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM16 11h1v1h-1zM22 11h1v1h-1zM1 12h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM5 12h1v1h-1zM7 12h1v1h-1zM10 12h1v1h-1zM13 12h1v1h-1zM14 12h1v1h-1zM16 12h1v1h-1zM17 12h1v1h-1zM18 12h1v1h-1zM19 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM1 13h1v1h-1zM2 13h1v1h-1zM4 13h1v1h-1zM8 13h1v1h-1zM9 13h1v1h-1zM18 13h1v1h-1zM19 13h1v1h-1zM21 13h1v1h-1zM23 13h1v1h-1zM24 13h1v1h-1zM3 14h1v1h-1zM5 14h1v1h-1zM7 14h1v1h-1zM11 14h1v1h-1zM15 14h1v1h-1zM21 14h1v1h-1zM23 14h1v1h-1zM24 14h1v1h-1zM2 15h1v1h-1zM3 15h1v1h-1zM4 15h1v1h-1zM8 15h1v1h-1zM9 15h1v1h-1zM10 15h1v1h-1zM11 15h1v1h-1zM13 15h1v1h-1zM14 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM19 15h1v1h-1zM21 15h1v1h-1zM1 16h1v1h-1zM9 16h1v1h-1zM10 16h1v1h-1zM13 16h1v1h-1zM15 16h1v1h-1zM17 16h1v1h-1zM18 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM22 16h1v1h-1zM24 16h1v1h-1zM10 17h1v1h-1zM12 17h1v1h-1zM14 17h1v1h-1zM15 17h1v1h-1zM16 17h1v1h-1zM19 17h1v1h-1zM22 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM0 18h1v1h-1zM1 18h1v1h-1zM2 18h1v1h-1zM3 18h1v1h-1zM4 18h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM11 18h1v1h-1zM13 18h1v1h-1zM15 18h1v1h-1zM19 18h1v1h-1zM22 18h1v1h-1zM23 18h1v1h-1zM24 18h1v1h-1zM0 19h1v1h-1zM6 19h1v1h-1zM9 19h1v1h-1zM10 19h1v1h-1zM14 19h1v1h-1zM16 19h1v1h-1zM19 19h1v1h-1zM20 19h1v1h-1zM0 20h1v1h-1zM2 20h1v1h-1zM3 20h1v1h-1zM4 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM14 20h1v1h-1zM15 20h1v1h-1zM16 20h1v1h-1zM17 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM0 21h1v1h-1zM2 21h1v1h-1zM3 21h1v1h-1zM4 21h1v1h-1zM6 21h1v1h-1zM14 21h1v1h-1zM20 21h1v1h-1zM22 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM0 22h1v1h-1zM2 22h1v1h-1zM3 22h1v1h-1zM4 22h1v1h-1zM6 22h1v1h-1zM12 22h1v1h-1zM13 22h1v1h-1zM19 22h1v1h-1zM0 23h1v1h-1zM6 23h1v1h-1zM8 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM15 23h1v1h-1zM16 23h1v1h-1zM17 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM24 23h1v1h-1zM0 24h1v1h-1zM1 24h1v1h-1zM2 24h1v1h-1zM3 24h1v1h-1zM4 24h1v1h-1zM5 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM12 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1zM19 24h1v1h-1zM20 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1z"/></symbol>
+</svg>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand" aria-label="Thela home"><span class="brand-mark" aria-hidden="true">t</span>thela</a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#creators">Creators</a>
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#apply" class="btn btn-primary btn-sm">Apply</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- 1 HERO -->
+<section class="hero wrap">
+  <div class="hero-copy">
+    <h1 class="display">Stop chasing screenshots. <strong>Sell from one link.</strong></h1>
+    <p class="lead">For creators who sell by Instagram DM. Your guides, courses and calls in one link. Buyers pay your own UPI and send you their name and order code, so you know who bought what. You check your bank app, not a screenshot. We set up the store for you, and Thela takes nothing from your sales.</p>
+    <div class="hero-cta">
+      <a href="#apply" class="btn btn-primary">Apply as a founding creator</a>
+      <p class="small">First month free, then ₹299 a month by UPI. No card, no auto-debit. 10 founding spots. <a href="https://thela-store.netlify.app/s/demo/">See a demo store</a></p>
+    </div>
+  </div>
+
+  <div class="hero-stage blk-marigold">
+    <div class="phone" role="group" aria-label="Interactive example of a Thela store">
+      <div class="screen">
+        <div class="store-top">
+          <span class="avatar avatar-ini" aria-hidden="true">RM</span>
+          <p class="store-name">Riya Menon</p>
+          <p class="store-bio">Eggless baking for home kitchens</p>
+          <div class="store-social" aria-hidden="true">
+            <svg class="ic"><use href="#i-ig"/></svg><svg class="ic"><use href="#i-yt"/></svg><svg class="ic"><use href="#i-wa"/></svg>
+          </div>
+        </div>
+        <ul class="store-list">
+          <li class="product">
+            <span class="thumb thumb-ic"><svg class="ic"><use href="#i-book"/></svg></span>
+            <div><p class="p-title">Eggless Baking Starter Guide</p><p class="p-meta">PDF, 42 pages</p></div>
+            <button class="p-buy" id="buy-1" data-item="Eggless Baking Starter Guide" data-price="299">₹299</button>
+          </li>
+          <li class="product">
+            <span class="thumb thumb-ic"><svg class="ic"><use href="#i-play"/></svg></span>
+            <div><p class="p-title">Weekend Sourdough Course</p><p class="p-meta">8 video lessons</p></div>
+            <button class="p-buy" id="buy-2" data-item="Weekend Sourdough Course" data-price="1,499">₹1,499</button>
+          </li>
+          <li class="product">
+            <span class="thumb thumb-ic"><svg class="ic"><use href="#i-video"/></svg></span>
+            <div><p class="p-title">1:1 Kitchen Call</p><p class="p-meta">30 min, video</p></div>
+            <button class="p-buy" id="buy-3" data-item="1:1 Kitchen Call" data-price="999">₹999</button>
+          </li>
+        </ul>
+        <div class="sheet" id="sheet" inert>
+          <div class="sheet-body">
+            <p class="sheet-item" id="sheet-item"></p>
+            <div class="sheet-step" id="step-email">
+              <label class="sr" for="demo-name">Your name</label>
+              <input id="demo-name" placeholder="Your name" autocomplete="off">
+              <label class="sr" for="demo-email">Your email</label>
+              <input id="demo-email" type="email" placeholder="Your email" autocomplete="off">
+              <label class="sheet-age"><input type="checkbox" id="demo-age"> I am 18 or over, or a parent or guardian is paying.</label>
+              <button class="btn btn-primary" id="sheet-next">Continue to pay</button>
+            </div>
+            <div class="sheet-step" id="step-pay" hidden>
+              <div class="sheet-qr">
+                <svg role="img" aria-label="Example QR code, not a real one"><use href="#i-qr"/></svg>
+                <div class="sheet-meta">
+                  <b id="sheet-amt"></b>
+                  <span>You are paying Riya Menon. Check this name in your UPI app before you pay.</span>
+                  <span>Order <span class="sheet-code" id="sheet-code"></span></span>
+                  <span class="sheet-tag">Example only</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" id="sheet-pay">I've paid</button>
+            </div>
+            <button class="sheet-close" id="sheet-close">Cancel</button>
+          </div>
+          <div class="sheet-done">
+            <svg class="ic"><use href="#i-check"/></svg>
+            <p>Your order code goes to Riya on WhatsApp. She checks the payment and sends what you bought.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="hero-note"><svg class="ic"><use href="#i-tap"/></svg>Tap a price to see how buyers pay</p>
+  </div>
+</section>
+
+<!-- 2 BLACK STRIP -->
+<div class="strip" aria-label="Things creators sell on Thela">
+  <ul class="strip-track" id="strip">
+    <li>Diet plans<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>UPSC notes<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Recipe e-books<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Canva templates<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Tarot readings<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Guitar lessons<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Resume reviews<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Lightroom presets<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Yoga memberships<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+    <li>Mock interviews<svg class="ic" aria-hidden="true"><use href="#i-ast"/></svg></li>
+  </ul>
+</div>
+
+<!-- 3 BEFORE / AFTER (both shown, no toggle) -->
+<section class="wrap section" aria-labelledby="ba-title">
+  <div class="head">
+    <h2 class="title" id="ba-title">Atka paisa: your money, stuck on the way.</h2>
+    <p class="lead">Money that's yours but gets stuck, cut or faked before it reaches you. It shows up in three places.</p>
+  </div>
+  <div class="ba-grid">
+    <div class="ba-col ba-today">
+      <h3 class="ba-label">Today</h3>
+      <ul class="notes">
+        <li class="note"><svg class="ic"><use href="#i-dm"/></svg>“Three people sent the same screenshot. Who actually paid ₹499?”<small>DMs and screenshots</small></li>
+        <li class="note"><svg class="ic"><use href="#i-inr"/></svg>“Part of my sale goes to the platform before I see it.”<small>Platforms that take a cut</small></li>
+        <li class="note"><svg class="ic"><use href="#i-cal"/></svg>“The brand said 60 days. It's been five months.”<small>Brand deals</small></li>
+      </ul>
+      <p class="small">Examples we wrote, not real people's words.</p>
+    </div>
+    <div class="ba-col ba-thela">
+      <h3 class="ba-label">With Thela</h3>
+      <div class="after-card">
+        <p class="after-link"><svg class="ic"><use href="#i-link"/></svg>Riya's store link</p>
+        <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-book"/></svg></span><div><p class="p-title">Starter Guide</p><p class="p-meta">PDF</p></div><span class="p-buy">₹299</span></div>
+        <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-play"/></svg></span><div><p class="p-title">Sourdough Course</p><p class="p-meta">Video course</p></div><span class="p-buy">₹1,499</span></div>
+        <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><p class="p-title">Kitchen Call</p><p class="p-meta">30 min</p></div><span class="p-buy">₹999</span></div>
+      </div>
+      <ul class="after-points">
+        <li><svg class="ic"><use href="#i-check"/></svg><span><b>Check your bank, not a screenshot.</b>Each order gets its own QR with the amount and an order code, and the buyer sends you their name and code on WhatsApp.</span></li>
+        <li><svg class="ic"><use href="#i-inr"/></svg><span><b>Nothing taken from your sales.</b>₹299 a month, flat. Buyers pay your UPI, not us.</span></li>
+        <li><svg class="ic"><use href="#i-users"/></svg><span><b>Earn from your followers, not a brand's calendar.</b>They pay up front, straight to your bank.</span></li>
+      </ul>
+      <p class="small">You still check each payment and send the product yourself, with a saved reply we write for you. Automatic checking is planned, no dates yet.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 CREATORS (all shown, no tabs) -->
+<section class="wrap" id="creators" aria-labelledby="cr-title">
+  <div class="head">
+    <h2 class="title" id="cr-title">Whatever you teach, sell it here.</h2>
+    <p class="lead">Five kinds of creator, five ways of earning. Made-up examples, not real Thela creators.</p>
+  </div>
+  <ul class="cr-grid">
+    <li class="cr-card blk-lime">
+      <div class="cr-head"><span class="avatar avatar-ini" aria-hidden="true">KS</span><div><h3 class="cr-name">Kabir Sethi</h3><p class="cr-role">Strength coach, Delhi</p></div></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-book"/></svg></span><div><p class="p-title">12-week fat-loss plan</p><p class="p-meta">PDF</p></div><span class="p-buy">₹299</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-renew"/></svg></span><div><p class="p-title">Monthly coaching</p><p class="p-meta">Paid monthly</p></div><span class="p-buy">₹1,999/mo</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><p class="p-title">Form-check call</p><p class="p-meta">20 min</p></div><span class="p-buy">₹499</span></div>
+      <p class="cr-note">Clients pay first, then pick a slot on his free booking link.</p>
+    </li>
+    <li class="cr-card blk-lilac">
+      <div class="cr-head"><span class="avatar avatar-ini" aria-hidden="true">PS</span><div><h3 class="cr-name">Priya Sharma</h3><p class="cr-role">UPSC mentor, Jaipur</p></div></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-book"/></svg></span><div><p class="p-title">Polity one-pagers</p><p class="p-meta">PDF</p></div><span class="p-buy">₹199</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-form"/></svg></span><div><p class="p-title">Prelims test series</p><p class="p-meta">20 tests</p></div><span class="p-buy">₹999</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><p class="p-title">Doubt call</p><p class="p-meta">30 min</p></div><span class="p-buy">₹499</span></div>
+      <p class="cr-note">Her store is in Hindi and English, the languages her students study in.</p>
+    </li>
+    <li class="cr-card blk-marigold">
+      <div class="cr-head"><span class="avatar avatar-ini" aria-hidden="true">RM</span><div><h3 class="cr-name">Riya Menon</h3><p class="cr-role">Home baker, Kochi</p></div></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-book"/></svg></span><div><p class="p-title">Starter Guide</p><p class="p-meta">PDF</p></div><span class="p-buy">₹299</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-users"/></svg></span><div><p class="p-title">Live sourdough class</p><p class="p-meta">Sat, 11 am</p></div><span class="p-buy">₹799</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><p class="p-title">Kitchen Call</p><p class="p-meta">30 min</p></div><span class="p-buy">₹999</span></div>
+      <p class="cr-note">Uses an AutoDM tool already, so her store link goes in the DM.</p>
+    </li>
+    <li class="cr-card blk-rose">
+      <div class="cr-head"><span class="avatar avatar-ini" aria-hidden="true">AI</span><div><h3 class="cr-name">Ananya Iyer</h3><p class="cr-role">Template designer, Pune</p></div></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-img"/></svg></span><div><p class="p-title">Instagram post kit</p><p class="p-meta">60 templates</p></div><span class="p-buy">₹299</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-pkg"/></svg></span><div><p class="p-title">Brand starter pack</p><p class="p-meta">Canva</p></div><span class="p-buy">₹499</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-cal"/></svg></span><div><p class="p-title">Content planner</p><p class="p-meta">Notion</p></div><span class="p-buy">₹149</span></div>
+      <p class="cr-note">An example of a first product, from someone new to selling.</p>
+    </li>
+    <li class="cr-card blk-mint">
+      <div class="cr-head"><span class="avatar avatar-ini" aria-hidden="true">MG</span><div><h3 class="cr-name">Meher Gill</h3><p class="cr-role">Tarot reader, Lucknow</p></div></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-video"/></svg></span><div><p class="p-title">Tarot reading</p><p class="p-meta">20 min</p></div><span class="p-buy">₹599</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-book"/></svg></span><div><p class="p-title">Birth-chart report</p><p class="p-meta">PDF</p></div><span class="p-buy">₹999</span></div>
+      <div class="product"><span class="thumb thumb-ic"><svg class="ic"><use href="#i-users"/></svg></span><div><p class="p-title">Monthly circle</p><p class="p-meta">Paid monthly</p></div><span class="p-buy">₹299/mo</span></div>
+      <p class="cr-note">Clients pay first, then book their reading.</p>
+    </li>
+    <li class="cr-card cr-you">
+      <h3 class="cr-name">Your store could be next.</h3>
+      <p class="cr-note">Tell us what you sell. We build the store, you approve it, and it's live in your bio.</p>
+      <a class="btn btn-primary" href="#apply">Apply as a founding creator</a>
+    </li>
+  </ul>
+</section>
+
+<!-- 5 FEATURES -->
+<section class="wrap section" id="features" aria-labelledby="ft-title">
+  <div class="head">
+    <h2 class="title" id="ft-title">What founding creators get today.</h2>
+    <p class="lead">Simple on purpose. Everything here works now, and we set it up for you.</p>
+  </div>
+  <div class="feat-grid">
+    <article class="tile wide t-marigold">
+      <svg class="ic"><use href="#i-inr"/></svg>
+      <h3>Paid straight to your UPI</h3>
+      <p>Each order gets its own QR with the amount and an order code inside. The money goes to your bank account. Thela never touches it.</p>
+      <div class="mini" aria-hidden="true"><div class="mini-card">
+        <div class="mini-row"><span>Monthly coaching</span><b>₹1,999</b></div>
+        <div class="mini-row"><span>Order</span><b>KS7Q2</b></div>
+        <div class="mini-row"><span>Paying</span><b>Kabir Sethi</b></div>
+      </div></div>
+    </article>
+    <article class="tile">
+      <svg class="ic"><use href="#i-check"/></svg>
+      <h3>Set up for you</h3>
+      <p>Send us your products, prices and a photo on WhatsApp. We build your store, and you approve every word before it goes live.</p>
+    </article>
+    <article class="tile">
+      <svg class="ic"><use href="#i-wa"/></svg>
+      <h3>Saved replies</h3>
+      <p>Buyers message you their order code. Check your bank app, then send the file or link with a reply we write for you.</p>
+      <div class="mini" aria-hidden="true"><div class="bubbles">
+        <p class="bubble">Order PS3K8, ₹199 paid</p>
+        <p class="bubble me">Thank you! Here are your Polity one-pagers.<span class="file"><svg class="ic"><use href="#i-book"/></svg>polity-notes.pdf</span></p>
+      </div></div>
+    </article>
+    <article class="tile wide">
+      <svg class="ic"><use href="#i-dm"/></svg>
+      <h3>Planned, no dates yet</h3>
+      <p>We'll build these once the first stores are selling, and the founding fee doesn't include them. Already use an AutoDM tool? Put your store link in the DM.</p>
+      <div class="mini"><div class="planned"><span>Automatic payment check</span><span>AutoDM for Instagram</span><span>WhatsApp delivery</span><span>UPI AutoPay</span><span>GST invoices</span><span>Card payments</span><span>Broadcasts</span></div></div>
+    </article>
+    <article class="tile">
+      <svg class="ic"><use href="#i-cal"/></svg>
+      <h3>Paid calls</h3>
+      <p>Buyers pay first. Your reply includes your free booking link, and they pick a slot that suits you both.</p>
+      <div class="mini" aria-hidden="true"><div class="slots"><span>10:00</span><span class="taken">11:30</span><span class="picked">16:00</span><span>18:30</span></div></div>
+    </article>
+    <article class="tile wide t-mint">
+      <svg class="ic"><use href="#i-lang"/></svg>
+      <h3>Hindi or English</h3>
+      <p>Your store in the language your buyers read. More languages later.</p>
+      <div class="mini" aria-hidden="true"><div class="langs"><span class="on" lang="hi">हिंदी</span><span>English</span></div></div>
+    </article>
+  </div>
+</section>
+
+<!-- 6 PRICING -->
+<section class="wrap" id="pricing" aria-labelledby="pr-title">
+  <div class="head">
+    <h2 class="title" id="pr-title">One plan while we're small.</h2>
+  </div>
+  <div class="plans one">
+    <article class="plan featured">
+      <div class="plan-head"><h3 class="plan-name">Founding creator</h3><span class="badge">10 spots</span></div>
+      <p class="plan-for">8 spots for creators who already sell a few times a month, 2 for first-timers. All open on 17 October 2026.</p>
+      <p class="price"><span class="price-num">₹299</span><span class="price-per">/ month</span></p>
+      <p class="cut">First month free, from the day your store goes live. Then ₹299 a month, paid by you by UPI. No card, no auto-debit. If you don't pay after the free month, your store goes offline 7 days later.</p>
+      <p class="cut">Nothing taken from your sales. Buyers pay your UPI.</p>
+      <a class="btn btn-primary" href="#apply">Apply</a>
+      <ul class="plan-list">
+        <li><svg class="ic"><use href="#i-tick"/></svg>Your store page, set up by us</li>
+        <li><svg class="ic"><use href="#i-tick"/></svg>Guides, courses, calls and monthly plans</li>
+        <li><svg class="ic"><use href="#i-tick"/></svg>A QR and order code for every order</li>
+        <li><svg class="ic"><use href="#i-tick"/></svg>Saved replies to send what you sell</li>
+        <li><svg class="ic"><use href="#i-tick"/></svg>Small changes to your store when you need them</li>
+        <li><svg class="ic"><use href="#i-tick"/></svg>Hindi or English</li>
+        <li class="plan-sub">Not included yet</li>
+        <li><svg class="ic x"><use href="#i-minus"/></svg>AutoDM, WhatsApp delivery, AutoPay, GST invoices, card payments</li>
+      </ul>
+      <p class="breakeven">Your buyers are yours: when they order, their details go to you, not to Thela.</p>
+    </article>
+    <div class="plan-side">
+      <h3>How the founding period works</h3>
+      <ol>
+        <li>Apply below. It takes two minutes. We read every application by hand, and spots are limited, so not everyone gets one.</li>
+        <li>We message you on WhatsApp within 2 days for your products, prices and photo.</li>
+        <li>We build your store and you approve it.</li>
+        <li>You put the link in your bio and start selling.</li>
+        <li>Your first month is free. We'll remind you 3 days before it ends; from then it's ₹299 a month by UPI. To leave, message Aryan on WhatsApp (number below).</li>
+      </ol>
+      <p class="small"><b>Who's behind Thela:</b> I'm Aryan Salooja, in Delhi NCR. I set up every founding store myself, so you'll be talking to me. WhatsApp me on <a href="https://wa.me/917800033210">+91 78000 33210</a>.</p>
+    </div>
+  </div>
+  <p class="fine">Your buyers' money goes to your own UPI account. Thela is new, so plans may change for new creators. If your fee ever changes, we'll tell you before it applies to you.</p>
+</section>
+
+<!-- 7 FAQ -->
+<section class="wrap section" id="faq" aria-labelledby="faq-title">
+  <div class="block blk-lime faq">
+    <h2 class="title" id="faq-title">Questions creators ask</h2>
+    <div class="faq-list">
+      <details><summary>Who sets up my store?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>We do, by hand, while Thela is small. You send your products, prices and a photo on WhatsApp, and you approve the page before it goes live.</p></details>
+      <details><summary>How do my buyers pay?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>They tap a price, add their email, and pay your UPI with the QR or your UPI ID. Each order has its own code, and the buyer sends it to you on WhatsApp with their name, so you can match it with the payment in your bank app. Buyers don't need an account.</p></details>
+      <details><summary>When do I get paid?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>Usually within seconds. It's your own UPI, so the money reaches your bank account as soon as the buyer pays. Thela never holds it. One caution: banks sometimes freeze an account after a fraud complaint about a payment, so we suggest a separate account just for sales.</p></details>
+      <details><summary>Who sends the product, and how fast?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>You do, after you've checked the payment, using a saved reply we write for you. Your store tells buyers when to expect it, for example within 12 hours.</p></details>
+      <details><summary>Why would a buyer trust a creator to send it?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>Every store says "Checked by Thela": we confirm the creator's UPI ID is really theirs before it goes live. If a buyer pays and doesn't get their order in the promised time, they can tell us on WhatsApp in one tap, and we follow it up with you. Creators who don't deliver or refund are removed. Refunds always come from you, because Thela never receives the payment.</p></details>
+      <details><summary>What about refunds?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>You pick your refund rule and it's shown on your store. Refunds go from your UPI app back to the person who paid.</p></details>
+      <details><summary>Do I need GST?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>It depends on your income and what you sell, so check with a CA. Your store works with or without a GSTIN.</p></details>
+      <details><summary>What does Thela cost?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>Your first month is free, from the day your store goes live. After that it's ₹299 a month for founding creators, paid by UPI, and nothing taken from your sales. No card, no auto-debit.</p></details>
+      <details><summary>What happens after the free month?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>We message you 3 days before it ends. Pay ₹299 by UPI to keep your store live, or tell us to stop and we take it down. If we don't hear from you, your store stays live for 7 more days (they count as part of month two), then goes offline. Pay within 30 days and it comes back as it was; after that we delete our copies, as if you'd left.</p></details>
+      <details><summary>I haven't sold anything yet. Can I apply?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>Yes. Two of the 10 founding spots are for first-timers. We set up your first store by hand, and you share the link with your followers. From month two it's ₹299 a month, whether or not you've sold anything.</p></details>
+      <details><summary>What can't I sell?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>Physical goods, for now. No stock tips, trading calls or investment advice. No promises of guaranteed results or income, and no claims you can't back up.</p></details>
+      <details><summary>How do I leave?<svg class="ic" aria-hidden="true"><use href="#i-caret"/></svg></summary><p>Message us on WhatsApp any time. We take your store down and stop the fee, so you won't pay for the next month. Your products and your buyers stay yours.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- 8 APPLY -->
+<section class="wrap" id="apply" aria-labelledby="cl-title">
+  <div class="block blk-navy closing">
+    <h2 class="title" id="cl-title">Apply as a founding creator.</h2>
+    <p class="lead">Two minutes. We read every application and reply on WhatsApp within 2 days. Spots are limited, so not everyone gets one.</p>
+    <form class="apply" id="apply-form" name="founding-creator" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="founding-creator">
+      <p class="hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <div class="apply-grid">
+        <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" required autocomplete="name"></div>
+        <div class="field"><label for="f-handle">Instagram or YouTube handle</label><input id="f-handle" name="handle" required autocomplete="off" spellcheck="false" placeholder="@yourname"></div>
+        <div class="field"><label for="f-wa">WhatsApp number</label><input id="f-wa" name="whatsapp" type="tel" required inputmode="tel" autocomplete="tel" placeholder="98765 43210"></div>
+        <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="f-sell">What do you sell?</label>
+          <select id="f-sell" name="sells" required>
+            <option value="">Choose one</option>
+            <option>Guides or notes (PDFs)</option>
+            <option>Courses or classes</option>
+            <option>1:1 calls or coaching</option>
+            <option>Monthly plans or memberships</option>
+            <option>Templates or presets</option>
+            <option>Something else</option>
+          </select></div>
+        <div class="field"><label for="f-today">How do buyers pay you today?</label>
+          <select id="f-today" name="pays-today" required>
+            <option value="">Choose one</option>
+            <option>UPI, then a screenshot</option>
+            <option>Topmate</option>
+            <option>Instamojo or a Razorpay link</option>
+            <option>Another platform</option>
+            <option>I don't sell yet</option>
+          </select></div>
+        <div class="field"><label for="f-sales">About how many paid sales in the last 3 months?</label><input id="f-sales" name="sales-3m" type="number" min="0" step="1" inputmode="numeric" required placeholder="0"><small>0 is fine.</small></div>
+        <div class="field"><label for="f-store">Store name you'd like</label><input id="f-store" name="store-name" autocomplete="off" spellcheck="false" placeholder="yourname"><small>Optional. Letters and numbers only.</small></div>
+      </div>
+      <label class="consent"><input type="checkbox" name="consent" value="yes" required><span>Thela can contact me on WhatsApp and email about this application, and use my answers to understand how creators sell. <a href="https://thela-store.netlify.app/about.html#privacy">How we use your details</a></span></label>
+      <button class="btn btn-primary" type="submit">Send application</button>
+      <p class="apply-msg" id="apply-msg" role="status"></p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <a href="#top" class="brand"><span class="brand-mark" aria-hidden="true">t</span>thela</a>
+    <nav aria-label="Footer"><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="https://thela-store.netlify.app/about.html">About, privacy and terms</a></nav>
+    <p>Thela is run by Salooja Digital, Delhi NCR. Write to aryan200284@gmail.com.</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Strip: duplicate items for a seamless loop
+  var strip = document.getElementById('strip');
+  Array.prototype.slice.call(strip.children).forEach(function (li) {
+    var c = li.cloneNode(true); c.setAttribute('aria-hidden', 'true'); strip.appendChild(c);
+  });
+
+  // Hero mini store: shows the real buyer flow (email, QR with order code, "I've paid")
+  var sheet = document.getElementById('sheet'), timer;
+  var stepEmail = document.getElementById('step-email'), stepPay = document.getElementById('step-pay');
+  var nextBtn = document.getElementById('sheet-next'), payBtn = document.getElementById('sheet-pay');
+  // Like the real store: no pre-ticked box, and no paying until the 18+ box is ticked
+  var age = document.getElementById('demo-age');
+  nextBtn.disabled = !age.checked;
+  age.addEventListener('change', function () { nextBtn.disabled = !age.checked; });
+  function code() {
+    var abc = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = 'RM';
+    for (var i = 0; i < 3; i++) s += abc[Math.floor(Math.random() * abc.length)];
+    return s;
+  }
+  function closeSheet() { sheet.classList.remove('open'); sheet.inert = true; }
+  document.querySelectorAll('button.p-buy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      clearTimeout(timer);
+      sheet.classList.remove('paid');
+      stepEmail.hidden = false; stepPay.hidden = true;
+      document.getElementById('sheet-item').textContent = b.dataset.item;
+      document.getElementById('sheet-amt').textContent = '₹' + b.dataset.price;
+      document.getElementById('sheet-code').textContent = code();
+      sheet.classList.add('open'); sheet.inert = false;
+      document.getElementById('demo-name').focus({ preventScroll: true });
+    });
+  });
+  nextBtn.addEventListener('click', function () {
+    stepEmail.hidden = true; stepPay.hidden = false;
+    payBtn.focus({ preventScroll: true });
+  });
+  document.getElementById('sheet-close').addEventListener('click', closeSheet);
+  sheet.addEventListener('keydown', function (e) { if (e.key === 'Escape') { closeSheet(); document.getElementById('buy-1').focus(); } });
+  payBtn.addEventListener('click', function () { sheet.classList.add('paid'); timer = setTimeout(closeSheet, 3200); });
+
+  // Application form: Netlify Forms. Without JS the browser posts it normally.
+  // Other hosts (the Claude preview, the local server) cannot receive it, so say so.
+  var form = document.getElementById('apply-form'), msg = document.getElementById('apply-msg');
+  var store = document.getElementById('f-store');
+  store.addEventListener('input', function () { store.value = store.value.toLowerCase().replace(/[^a-z0-9]/g, ''); });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = form.querySelector('button[type=submit]');
+    msg.className = 'apply-msg'; msg.textContent = 'Sending...'; btn.disabled = true;
+    var live = /(^|\.)(netlify\.app|thela\.site)$/.test(location.hostname); // the live hosts: Netlify's address and thela.site
+    if (!live) {
+      msg.innerHTML = 'This preview can\'t send applications. <a href="https://thela-store.netlify.app/#apply">Apply on the live site</a>.';
+      msg.classList.add('err'); btn.disabled = false; return;
+    }
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(form)).toString()
+    }).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      form.reset();
+      msg.textContent = 'Thanks. Aryan Salooja will message you on WhatsApp within 2 days.';
+      msg.classList.add('ok');
+    }).catch(function () {
+      msg.textContent = 'Sorry, that didn\'t send. Please try again, or write to aryan200284@gmail.com.';
+      msg.classList.add('err');
+    }).then(function () { btn.disabled = false; });
+  });
+})();
+</script>

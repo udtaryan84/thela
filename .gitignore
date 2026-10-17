@@ -1,0 +1,5 @@
+# Build extras and local tooling
+*.zip
+.netlify/
+.playwright-cli/
+node_modules/

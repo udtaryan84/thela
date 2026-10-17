@@ -1,0 +1,4 @@
+# Netlify publishes the already-built site/ folder; build it locally with scripts/build.ps1 first.
+[build]
+  publish = "site"
+  command = ""

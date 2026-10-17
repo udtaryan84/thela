@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESC}}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Thela">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESC}}">
+{{ROBOTS}}
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%279%27 fill=%27%23C2410C%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-family=%27Arial,sans-serif%27 font-weight=%27700%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27%3Et%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@500&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* A creator's store. Built by scripts/build.ps1 from stores/_template.html and stores/<name>.json. */
+:root {
+  --bg: #FFFFFF; --surface: #FFFFFF; --soft: #F7F7F5; --ink: #0B0B0A; --ink-2: #4A4844;
+  --line: #E6E6E6; --accent: #C2410C; --accent-hover: #A93A0B; --accent-ink: #FFFFFF; --accent-soft: #FDEADF;
+  --placeholder: #6B675F; --ok: #1E7F42; --warn-bg: #F7E4B8; --err: #B42318;
+  --sans: "Geist", "Noto Sans Devanagari", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E0E0D; --surface: #151514; --soft: #1B1A18; --ink: #F2F1EE; --ink-2: #ABA7A0;
+    --line: #2B2A27; --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418;
+    --placeholder: #8F8A83; --ok: #4ADE80; --warn-bg: #362C18; --err: #F87171; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E0E0D; --surface: #151514; --soft: #1B1A18; --ink: #F2F1EE; --ink-2: #ABA7A0;
+  --line: #2B2A27; --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418;
+  --placeholder: #8F8A83; --ok: #4ADE80; --warn-bg: #362C18; --err: #F87171; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--sans); }
+h1, h2, p, ul { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: inherit; text-underline-offset: .2em; }
+button { font: inherit; color: inherit; cursor: pointer; }
+img { display: block; max-width: 100%; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.page { max-width: 480px; margin-inline: auto; padding: 32px 16px 112px; display: grid; gap: 24px; }
+.banner { background: var(--warn-bg); border-radius: 14px; padding: 10px 14px; font-size: 14px; font-weight: 500; text-align: center; }
+.top { display: grid; justify-items: center; text-align: center; gap: 4px; }
+.avatar { width: 88px; height: 88px; border-radius: 50%; object-fit: cover; background: var(--soft); margin-bottom: 8px; }
+.name { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; }
+.bio { color: var(--ink-2); max-width: 34ch; }
+.links { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
+.links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; padding: 6px 16px; border-radius: 50px; border: 1px solid var(--line); text-decoration: none; }
+
+.products { display: grid; gap: 10px; }
+.product { display: grid; grid-template-columns: 56px 1fr auto; gap: 12px; align-items: center; padding: 10px; border-radius: 16px; background: var(--soft); }
+.thumb { width: 56px; height: 56px; border-radius: 12px; object-fit: cover; background: var(--line); }
+.thumb-letter { display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 650; font-size: 1.4rem; }
+.avatar-letter { display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 650; font-size: 2rem; }
+.p-title { font-weight: 600; line-height: 1.25; }
+.p-meta { font-size: 13px; color: var(--ink-2); }
+.buy { border: 0; border-radius: 50px; min-height: 44px; padding: 8px 16px; font-weight: 600; background: var(--accent); color: var(--accent-ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.buy:hover { background: var(--accent-hover); }
+
+.promise { border: 1px solid var(--line); border-radius: 16px; padding: 16px; display: grid; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.promise b { color: var(--ink); font-size: 15px; }
+.promise a { color: var(--ink); font-weight: 600; display: inline-flex; align-items: center; min-height: 44px; }
+.info { display: grid; gap: 10px; font-size: 14px; color: var(--ink-2); border-top: 1px solid var(--line); padding-top: 20px; }
+.info b { color: var(--ink); font-weight: 600; }
+.footer { text-align: center; font-size: 13px; color: var(--ink-2); }
+.footer a { color: var(--ink); display: inline-block; padding: 12px 4px; }
+
+/* Checkout sheet */
+.scrim { position: fixed; inset: 0; background: rgb(0 0 0 / .45); z-index: 10; }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 11; max-height: 92vh; overflow-y: auto; background: var(--surface); border-radius: 24px 24px 0 0; padding: 24px 20px calc(96px + env(safe-area-inset-bottom)); box-shadow: 0 -18px 40px -20px rgb(0 0 0 / .4); }
+@media (min-width: 560px) { .sheet { left: 50%; right: auto; width: 480px; transform: translateX(-50%); } }
+.sheet-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 16px; }
+.sheet-title { font-size: 1.15rem; font-weight: 600; }
+.amount { font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.close { border: 0; background: var(--soft); border-radius: 50px; min-width: 44px; min-height: 44px; font-size: 1.2rem; }
+.step { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 15px; font-weight: 500; }
+.field input { width: 100%; min-height: 48px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); color: var(--ink); font: 500 16px var(--sans); padding: 10px 14px; }
+.field input::placeholder { color: var(--placeholder); }
+.check { display: grid; grid-template-columns: 24px 1fr; gap: 10px; font-size: 14px; color: var(--ink-2); align-items: start; }
+.check input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 50px; padding: 10px 20px; border-radius: 50px; border: 1px solid transparent; font-weight: 600; font-size: 16px; text-decoration: none; text-align: center; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--surface); border-color: var(--ink); color: var(--ink); }
+.err { color: var(--err); font-size: 14px; min-height: 1.2em; }
+.payee { background: var(--accent-soft); border-radius: 14px; padding: 12px 14px; font-size: 15px; }
+.payee b { font-weight: 650; }
+.qr { display: grid; justify-items: center; gap: 8px; }
+.qr-box { width: 220px; max-width: 70vw; background: #FFFFFF; padding: 10px; border-radius: 16px; border: 1px solid var(--line); }
+.qr-box svg { display: block; width: 100%; height: auto; }
+.small { font-size: 13px; color: var(--ink-2); text-align: center; }
+.row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--soft); }
+.row span { font-size: 13px; color: var(--ink-2); display: block; }
+.row b { font-weight: 600; word-break: break-all; }
+.code { font-family: var(--mono); font-size: 1.1rem; letter-spacing: .04em; }
+.copy { display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); background: var(--surface); border-radius: 50px; min-height: 44px; padding: 6px 14px; font-size: 14px; font-weight: 600; }
+.apps { display: grid; gap: 8px; }
+.apps-label { font-weight: 600; }
+.apps-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.apps-row .btn { min-height: 52px; }
+.apps-row .btn { padding-inline: 12px; }
+.linkbtn { border: 0; background: none; color: var(--ink-2); text-decoration: underline; min-height: 44px; font-size: 14px; }
+.or { text-align: center; font-size: 13px; color: var(--ink-2); }
+.done { text-align: center; display: grid; gap: 12px; justify-items: center; }
+.done .tick { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 1.8rem; font-weight: 700; }
+</style>
+</head>
+<body>
+<noscript><p style="padding:24px;text-align:center">This store needs JavaScript to show prices and payment details. Please open it in Chrome or Safari.</p></noscript>
+<main class="page" id="page"></main>
+
+<div class="scrim" id="scrim" hidden></div>
+<section class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden>
+  <div class="sheet-head">
+    <div><p class="sheet-title" id="sheet-title"></p><p class="amount" id="sheet-amount"></p></div>
+    <button class="close" id="close" aria-label=""></button>
+  </div>
+
+  <form class="step" id="step-1" novalidate>
+    <div class="field"><label for="b-name" id="l-name"></label><input id="b-name" autocomplete="name"></div>
+    <div class="field"><label for="b-email" id="l-email"></label><input id="b-email" type="email" autocomplete="email" inputmode="email"></div>
+    <label class="check"><input type="checkbox" id="b-age"><span id="l-age"></span></label>
+    <p class="err" id="err" role="alert"></p>
+    <button class="btn btn-primary" type="submit" id="to-pay"></button>
+  </form>
+
+  <div class="step" id="step-2" hidden>
+    <p class="payee" id="payee"></p>
+    <div class="apps" id="upi-apps" hidden><p class="apps-label" id="l-apps"></p><div class="apps-row" id="apps-row"></div></div>
+    <div class="row"><div><span id="l-upi"></span><b id="upi-id"></b></div><button class="copy" id="copy-upi"></button></div>
+    <div class="row"><div><span id="l-code"></span><b class="code" id="code"></b></div><button class="copy" id="copy-code"></button></div>
+    <p class="or" id="or"></p>
+    <div class="qr">
+      <div class="qr-box" id="qr"></div>
+      <a class="copy" id="save-qr" download="upi-qr.gif"></a>
+    </div>
+    <button class="btn btn-primary" id="paid"></button>
+    <button class="linkbtn" id="cancel-order"></button>
+  </div>
+
+  <div class="step done" id="step-3" hidden>
+    <div class="tick" aria-hidden="true">&#10003;</div>
+    <p id="done-text"></p>
+    <a class="btn btn-primary" id="send-msg" target="_blank" rel="noopener"></a>
+    <p class="small" id="done-small"></p>
+  </div>
+</section>
+
+<script>
+/* qrcode-generator 1.4.4, Copyright (c) 2009 Kazuhiko Arase, MIT licence. Kept as is below. */
+{{QRLIB}}
+</script>
+<script>
+var STORE = {{DATA}};
+var SITE = {{SITE}};
+(function () {
+  var T = {
+    en: {
+      close: 'Close', name: 'Your name', email: 'Your email', age: 'I am 18 or over, or a parent or guardian is paying.',
+      next: 'Continue to pay', needName: 'Please add your name.', needEmail: 'Please add your email so the creator can send what you buy.',
+      needAge: 'Please confirm the line above.', payee: 'You are paying <b>{payee}</b>. Check this name in your UPI app before you pay.',
+      app: 'Pay {amt} with', otherApp: 'Other UPI app',
+      saveQr: 'Save QR', or: 'Paying from another phone? Scan this QR. On this phone, you can save it and scan it from your gallery in any UPI app.', upi: 'Pay {amt} to this UPI ID', code: 'Order code (add it in the payment note)',
+      copy: 'Copy', copied: 'Copied', holdToCopy: 'Press and hold to copy', cancel: 'Cancel this order and clear my details', contact: 'Contact', promiseTitle: 'Checked by Thela', promise1: 'Thela set up this store and confirmed that the UPI ID {upi} belongs to {payee}.', promise2: 'Paid but didn\x27t get your order {delivery}? Tell Thela and we\x27ll follow it up with {name}. Creators who don\x27t deliver or refund are removed from Thela. Thela never receives your payment, so refunds always come from the creator, not Thela.', promiseLink: 'Tell Thela on WhatsApp', notReceived: 'Not received {delivery}? Tell Thela on WhatsApp.', reportMsg: 'Hi Thela, I paid on the {store} store but haven\x27t received my order. Order code: {code}', paid: "I've paid", perMonth: '/ month',
+      doneWa: 'Last step: send your order code to {name} on WhatsApp. They will check the payment and send it {delivery}.',
+      doneMail: 'Last step: email your order code to {name}. They will check the payment and send it {delivery}.',
+      sendWa: 'Send on WhatsApp', sendMail: 'Send by email', doneSmall: 'Keep this page or your message as a record. Order {code}.',
+      msg: "Hi {name}, I've paid {amt} for {item}. Order {code}. My name: {buyer}. My email: {email}.",
+      msgMonth: "Hi {name}, I've paid {amt} for {item} (this month). Order {code}. My name: {buyer}. My email: {email}.",
+      soldBy: 'Sold by', refunds: 'Refunds', delivery: 'Delivery', payments: 'Payments go straight to {payee}\'s UPI account. Thela builds this page and never handles the money, so refunds always come from the creator, not Thela.',
+      report: 'Report this store', privacy: 'Privacy', madeWith: 'Store by Thela', demo: 'Demo store. Nothing here is real, and no payment goes anywhere.',
+      test: 'Test page for checking payments. Not a real store.', deliveryLine: 'Sent {delivery} after the payment is checked.'
+    },
+    hi: {
+      close: 'बंद करें', name: 'आपका नाम', email: 'आपका email', age: 'मेरी उम्र 18 साल या उससे ज़्यादा है, या माता-पिता pay कर रहे हैं।',
+      next: 'Pay करने के लिए आगे बढ़ें', needName: 'कृपया अपना नाम डालें।', needEmail: 'कृपया अपना email डालें, ताकि creator आपको आपका सामान भेज सकें।',
+      needAge: 'कृपया ऊपर वाली बात पर tick करें।', payee: 'आप <b>{payee}</b> को pay कर रहे हैं। Pay करने से पहले अपने UPI app में यह नाम ज़रूर देखें।',
+      app: '{amt} pay करें:', otherApp: 'कोई और UPI app',
+      saveQr: 'QR save करें', or: 'दूसरे फ़ोन से pay कर रहे हैं? यह QR scan करें। इसी फ़ोन पर हैं, तो QR save करके किसी भी UPI app में gallery से scan करें।', upi: 'इस UPI ID पर {amt} pay करें', code: 'Order code (payment note में लिखें)',
+      copy: 'Copy', copied: 'Copy हो गया', holdToCopy: 'Copy करने के लिए दबाकर रखें', cancel: 'यह order cancel करें और मेरी details हटाएँ', contact: 'संपर्क', promiseTitle: 'Thela द्वारा जाँचा गया', promise1: 'यह store Thela ने बनाया है, और हमने जाँचा है कि UPI ID {upi} {payee} की ही है।', promise2: 'Pay करने के बाद {delivery} आपका order नहीं मिला? Thela को बताइए, हम {name} से बात करेंगे। जो creators सामान नहीं भेजते या पैसे नहीं लौटाते, उन्हें Thela से हटा दिया जाता है। Thela को आपका payment नहीं मिलता, इसलिए refund हमेशा creator ही देते हैं, Thela नहीं।', promiseLink: 'WhatsApp पर Thela को बताएँ', notReceived: '{delivery} order नहीं मिला? WhatsApp पर Thela को बताएँ।', reportMsg: 'नमस्ते Thela, मैंने {store} store पर pay किया है लेकिन order नहीं मिला। Order code: {code}', paid: 'मैंने pay कर दिया', perMonth: '/ महीना',
+      doneWa: 'आख़िरी step: अपना order code WhatsApp पर {name} को भेजें। वे payment देखकर {delivery} भेज देंगे।',
+      doneMail: 'आख़िरी step: अपना order code email से {name} को भेजें। वे payment देखकर {delivery} भेज देंगे।',
+      sendWa: 'WhatsApp पर भेजें', sendMail: 'Email से भेजें', doneSmall: 'यह page या अपना message record के लिए रखें। Order {code}.',
+      msg: 'नमस्ते {name}, मैंने {item} के लिए {amt} pay कर दिए हैं। Order {code}. मेरा नाम: {buyer}. मेरा email: {email}.',
+      msgMonth: 'नमस्ते {name}, मैंने {item} (इस महीने) के लिए {amt} pay कर दिए हैं। Order {code}. मेरा नाम: {buyer}. मेरा email: {email}.',
+      soldBy: 'Seller', refunds: 'Refund', delivery: 'Delivery', payments: 'Payment सीधे {payee} के UPI account में जाता है। Thela यह page बनाता है, पैसे कभी नहीं छूता।',
+      report: 'इस store की शिकायत करें', privacy: 'Privacy', madeWith: 'Store by Thela', demo: 'Demo store. यहाँ कुछ भी असली नहीं है, कोई payment कहीं नहीं जाता।',
+      test: 'Payment जाँचने का test page. असली store नहीं।', deliveryLine: 'Payment देखने के बाद {delivery} भेजा जाता है।'
+    }
+  };
+  var t = T[STORE.lang] || T.en;
+  var inr = new Intl.NumberFormat('en-IN');
+  function rupees(n) { return '₹' + inr.format(n); }
+  function fill(s, v) { return s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function $(id) { return document.getElementById(id); }
+
+  // Store page
+  var html = '';
+  if (STORE.demo) html += '<p class="banner">' + esc(t.demo) + '</p>';
+  if (STORE.test) html += '<p class="banner">' + esc(t.test) + '</p>';
+  html += '<header class="top">' + (STORE.photo ? '<img class="avatar" src="' + esc(STORE.photo) + '" alt="" width="88" height="88">' : '<span class="avatar avatar-letter" aria-hidden="true">' + esc(STORE.name.split(' ').map(function (w) { return w.charAt(0); }).join('').slice(0, 2)) + '</span>') +
+    '<h1 class="name">' + esc(STORE.name) + '</h1><p class="bio">' + esc(STORE.bio || '') + '</p>';
+  var links = (STORE.links || []).map(function (l) { return '<a href="' + esc(l.url) + '" rel="noopener">' + esc(l.label) + '</a>'; }).join('');
+  if (links) html += '<nav class="links" aria-label="Links">' + links + '</nav>';
+  html += '</header><ul class="products">';
+  STORE.products.forEach(function (p, i) {
+    html += '<li class="product">' + (p.image ? '<img class="thumb" src="' + esc(p.image) + '" alt="" width="56" height="56" loading="lazy">' : '<span class="thumb thumb-letter" aria-hidden="true">' + esc(p.title.charAt(0)) + '</span>') +
+      '<div><p class="p-title">' + esc(p.title) + '</p><p class="p-meta">' + esc(p.meta || '') + '</p></div>' +
+      '<button class="buy" data-i="' + i + '">' + rupees(p.price) + (p.monthly ? ' ' + esc(t.perMonth) : '') + '</button></li>';
+  });
+  var first = STORE.name.split(' ')[0];
+  var report = function (code) { if (STORE.demo) return '#'; return 'https://wa.me/' + SITE.whatsapp + '?text=' + encodeURIComponent(fill(t.reportMsg, { store: STORE.name, code: code || '' })); };
+  html += '</ul><section class="promise" aria-label="' + esc(t.promiseTitle) + '"><b>' + esc(t.promiseTitle) + '</b><p>' + esc(fill(t.promise1, { upi: STORE.upi.id, payee: STORE.upi.payee })) + '</p><p>' + esc(fill(t.promise2, { delivery: STORE.delivery, name: first })) + '</p><a href="' + esc(report()) + '" rel="noopener">' + esc(t.promiseLink) + '</a></section>';
+  html += '<section class="info"><p><b>' + esc(t.soldBy) + ':</b> ' + esc(STORE.name) + ', ' + esc(STORE.city) + '</p>' +
+    (STORE.whatsapp && !STORE.demo ? '<p><b>' + esc(t.contact) + ':</b> <a href="https://wa.me/' + esc(STORE.whatsapp) + '">WhatsApp +' + esc(STORE.whatsapp.slice(0, 2) + ' ' + STORE.whatsapp.slice(2, 7) + ' ' + STORE.whatsapp.slice(7)) + '</a></p>' : '') +
+    (STORE.email && !STORE.demo ? '<p><b>Email:</b> <a href="mailto:' + esc(STORE.email) + '">' + esc(STORE.email) + '</a></p>' : '') +
+    '<p><b>' + esc(t.delivery) + ':</b> ' + esc(fill(t.deliveryLine, { delivery: STORE.delivery })) + '</p>' +
+    '<p><b>' + esc(t.refunds) + ':</b> ' + esc(STORE.refund) + '</p>' +
+    '<p>' + esc(fill(t.payments, { payee: STORE.upi.payee })) + '</p></section>' +
+    '<footer class="footer"><a href="/">' + esc(t.madeWith) + '</a> &middot; <a href="/about.html#privacy">' + esc(t.privacy) + '</a> &middot; ' +
+    '<a href="mailto:' + esc(SITE.email) + '?subject=' + encodeURIComponent('Report: ' + STORE.slug) + '">' + esc(t.report) + '</a></footer>';
+  $('page').innerHTML = html;
+
+  // Static labels in the sheet
+  $('close').setAttribute('aria-label', t.close); $('close').textContent = '×';
+  $('l-name').textContent = t.name; $('l-email').textContent = t.email; $('l-age').textContent = t.age;
+  $('to-pay').textContent = t.next; $('save-qr').textContent = t.saveQr;
+  $('or').textContent = t.or; $('l-code').textContent = t.code;
+  $('cancel-order').textContent = t.cancel; $('copy-upi').textContent = t.copy; $('copy-code').textContent = t.copy; $('paid').textContent = t.paid;
+
+  // Orders survive a reload (Instagram's browser often reloads after switching apps).
+  var opener = null;
+  var KEY = 'thela-order-' + STORE.slug, order = null;
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(order)); } catch (e) {} }
+  function load() {
+    try {
+      var o = JSON.parse(localStorage.getItem(KEY));
+      if (o && Date.now() - (o.at || 0) > 864e5) { forget(); return null; }  // saved orders expire after 24 hours
+      return o;
+    } catch (e) { return null; }
+  }
+  function forget() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  function newCode() {
+    var abc = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', s = (STORE.prefix || 'TH').toUpperCase().slice(0, 2);
+    for (var i = 0; i < 4; i++) s += abc[Math.floor(Math.random() * abc.length)];
+    return s;
+  }
+  function upiQuery(o, noAmount) {
+    var p = STORE.products[o.i];
+    var note = (o.code + ' ' + p.title).slice(0, 40);
+    // The UPI ID goes in as is: some UPI apps fail on an encoded @ (%40). build.ps1 only allows letters, digits, . _ - and one @.
+    return 'pa=' + STORE.upi.id + '&pn=' + encodeURIComponent(STORE.upi.payee) +
+      (noAmount ? '' : '&am=' + p.price.toFixed(2)) + '&cu=INR&tn=' + encodeURIComponent(note);
+  }
+  function upiLink(o) { return 'upi://pay?' + upiQuery(o); }
+  // One button per app, so the buyer's phone default (often WhatsApp) does not decide which app opens.
+  // Android: intent links that name the app. iPhone: each app's own link. Other: the plain UPI link.
+  var APPS = [
+    { name: 'Google Pay', pkg: 'com.google.android.apps.nbu.paisa.user', ios: 'gpay://upi/pay?' },
+    { name: 'PhonePe', pkg: 'com.phonepe.app', ios: 'phonepe://pay?' },
+    { name: 'Paytm', pkg: 'net.one97.paytm', ios: 'paytmmp://pay?' }
+  ];
+  var ua = navigator.userAgent, isAndroid = /android/i.test(ua), isIOS = /iphone|ipad|ipod/i.test(ua);
+  function appLink(a, o, noAmount) {
+    var q = upiQuery(o, noAmount);
+    if (isAndroid) return 'intent://pay?' + q + '#Intent;scheme=upi;package=' + a.pkg + ';end';
+    if (isIOS) return a.ios + q;
+    return 'upi://pay?' + q;
+  }
+  function show(step) { ['step-1', 'step-2', 'step-3'].forEach(function (s, n) { $(s).hidden = n + 1 !== step; }); }
+  function open(o) {
+    order = o;
+    var p = STORE.products[o.i];
+    $('sheet-title').textContent = p.title;
+    $('sheet-amount').textContent = rupees(p.price) + (p.monthly ? ' ' + t.perMonth : '');
+    if (!opener) opener = document.activeElement;
+    $('scrim').hidden = false; $('sheet').hidden = false; $('page').inert = true; document.body.style.overflow = 'hidden';
+    if (o.step >= 2) toPay(); else { show(1); $('b-name').value = o.buyer || ''; $('b-email').value = o.email || ''; $('b-age').checked = false; $('err').textContent = ''; $('b-name').focus({ preventScroll: true }); }
+  }
+  function closeSheet() {
+    $('scrim').hidden = true; $('sheet').hidden = true; $('page').inert = false; document.body.style.overflow = '';
+    if (opener && opener.focus) opener.focus({ preventScroll: true });
+    opener = null;
+  }
+  function toPay() {
+    var p = STORE.products[order.i], amt = rupees(p.price);
+    $('payee').innerHTML = fill(t.payee, { payee: esc(STORE.upi.payee) });
+    $('l-upi').textContent = fill(t.upi, { amt: amt });
+    $('upi-id').textContent = STORE.upi.id; $('code').textContent = order.code;
+    // Demo stores show a QR that only holds text, so nobody can pay a made-up ID.
+    var data = STORE.demo ? 'Thela demo store. This is not a payment QR.' : upiLink(order);
+    var qr = qrcode(0, 'M'); qr.addData(data); qr.make();
+    $('qr').innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true, alt: t.code + ' ' + order.code });
+    $('save-qr').href = qr.createDataURL(8, 16);
+    var apps = $('upi-apps');
+    apps.hidden = !(STORE.upiAppButton || STORE.test) || STORE.demo || !(isAndroid || isIOS);
+    $('l-apps').textContent = fill(t.app, { amt: amt });
+    $('apps-row').innerHTML = APPS.map(function (a) { return '<a class="btn btn-primary" href="' + esc(appLink(a, order)) + '">' + esc(a.name) + '</a>'; }).join('') +
+      '<a class="btn btn-secondary btn-other" href="' + esc(upiLink(order)) + '">' + esc(t.otherApp) + '</a>' +
+      // Test pages only: the same apps without the amount filled in, to see which apps accept that.
+      (STORE.test ? '<p class="apps-label" style="grid-column: 1 / -1; margin-top: 8px">Test: amount not filled in (type ' + esc(amt) + ' yourself)</p>' + APPS.map(function (a) { return '<a class="btn btn-secondary" href="' + esc(appLink(a, order, true)) + '">' + esc(a.name) + '</a>'; }).join('') : '');
+    show(2); order.step = 2; order.at = order.at || Date.now(); save();
+  }
+  function message() {
+    var p = STORE.products[order.i];
+    return fill(p.monthly ? t.msgMonth : t.msg, { name: STORE.name.split(' ')[0], amt: rupees(p.price), item: p.title, code: order.code, buyer: order.buyer, email: order.email });
+  }
+  function toDone() {
+    var wa = STORE.paidVia !== 'email', text = message();
+    $('done-text').textContent = fill(wa ? t.doneWa : t.doneMail, { name: STORE.name.split(' ')[0], delivery: STORE.delivery });
+    var link = wa ? 'https://wa.me/' + (STORE.demo ? '' : STORE.whatsapp) + '?text=' + encodeURIComponent(text)
+                  : 'mailto:' + encodeURIComponent(STORE.email) + '?subject=' + encodeURIComponent('Order ' + order.code) + '&body=' + encodeURIComponent(text);
+    $('send-msg').href = link; $('send-msg').textContent = wa ? t.sendWa : t.sendMail;
+    $('done-small').innerHTML = esc(fill(t.doneSmall, { code: order.code })) + '<br><a href="' + esc(report(order.code)) + '" rel="noopener">' + esc(fill(t.notReceived, { delivery: STORE.delivery })) + '</a>';
+    show(3); forget();
+    return link;
+  }
+
+  document.querySelectorAll('.buy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var i = Number(b.dataset.i), prev = load();
+      open(prev && prev.i === i && prev.step >= 1 ? prev : { i: i, code: newCode(), step: 1 });
+    });
+  });
+  $('step-1').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = $('b-email').value.trim();
+    if (!$('b-name').value.trim()) { $('err').textContent = t.needName; $('b-name').focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('err').textContent = t.needEmail; $('b-email').focus(); return; }
+    if (!$('b-age').checked) { $('err').textContent = t.needAge; $('b-age').focus(); return; }
+    order.buyer = $('b-name').value.trim(); order.email = email;
+    toPay();
+  });
+  // Some in-app browsers block the clipboard. Only say "Copied" when it worked;
+  // otherwise select the text so the buyer can press and hold to copy it.
+  function copier(btn, target) {
+    btn.addEventListener('click', function () {
+      var text = target.textContent;
+      var ok = function () { btn.textContent = t.copied; setTimeout(function () { btn.textContent = t.copy; }, 1800); };
+      var manual = function () {
+        var r = document.createRange(); r.selectNodeContents(target);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = t.holdToCopy; setTimeout(function () { btn.textContent = t.copy; }, 3000);
+      };
+      var legacy = function () {
+        var a = document.createElement('textarea'); a.value = text; a.setAttribute('readonly', '');
+        a.style.position = 'fixed'; a.style.opacity = '0'; document.body.appendChild(a); a.select();
+        var done = false; try { done = document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(a); done ? ok() : manual();
+      };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(ok, legacy); else legacy();
+    });
+  }
+  copier($('copy-upi'), $('upi-id'));
+  copier($('copy-code'), $('code'));
+  $('paid').addEventListener('click', function () { var link = toDone(); window.open(link, '_blank', 'noopener'); });
+  $('close').addEventListener('click', closeSheet);
+  $('cancel-order').addEventListener('click', function () { forget(); order = null; closeSheet(); });
+  $('scrim').addEventListener('click', closeSheet);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+
+  // Came back after paying in the UPI app: reopen where the buyer left off.
+  var pending = load();
+  if (pending && pending.step >= 2 && STORE.products[pending.i]) open(pending);
+})();
+</script>
+</body>
+</html>

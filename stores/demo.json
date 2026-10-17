@@ -1,0 +1,48 @@
+{
+  "slug": "demo",
+  "demo": true,
+  "lang": "en",
+  "name": "Riya Menon",
+  "prefix": "RM",
+  "bio": "Eggless baking for home kitchens. Sample store, made up for the demo.",
+  "city": "Kochi",
+  "links": [
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/"
+    }
+  ],
+  "upi": {
+    "id": "demo.only@upi",
+    "payee": "Riya Menon"
+  },
+  "upiAppButton": false,
+  "paidVia": "whatsapp",
+  "whatsapp": "",
+  "email": "",
+  "delivery": "within 12 hours",
+  "refund": "If the file doesn't open, message me within 7 days and I'll fix it or refund you. Calls can be moved once with 24 hours' notice.",
+  "products": [
+    {
+      "title": "Eggless Baking Starter Guide",
+      "meta": "PDF, 42 pages",
+      "price": 299
+    },
+    {
+      "title": "Weekend Sourdough Course",
+      "meta": "8 video lessons",
+      "price": 1499
+    },
+    {
+      "title": "1:1 Kitchen Call",
+      "meta": "30 min, video",
+      "price": 999
+    },
+    {
+      "title": "Monthly baking club",
+      "meta": "4 live classes a month",
+      "price": 499,
+      "monthly": true
+    }
+  ]
+}
