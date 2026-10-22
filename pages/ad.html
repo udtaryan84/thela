@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thela: the 33-second ad</title>
+<meta name="description" content="Stop chasing payment screenshots. Watch how Thela works in 33 seconds.">
+<meta property="og:title" content="Thela: stop chasing screenshots">
+<meta property="og:description" content="Watch how Thela works in 33 seconds.">
+<meta property="og:image" content="https://thela.site/media/thela-ad-poster.jpg">
+<meta property="og:url" content="https://thela.site/ad">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%279%27 fill=%27%23C2410C%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-family=%27Arial,sans-serif%27 font-weight=%27700%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27%3Et%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #F7F3EE; --ink: #14110E; --ink-2: #5E574F; --line: #E4DDD4; --accent: #C2410C; --accent-ink: #FFFFFF; --sans: "Geist", "Segoe UI", system-ui, -apple-system, sans-serif; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #0F0D0B; --ink: #F3ECE2; --ink-2: #A89F94; --line: #2A241E; --accent: #FB8A4C; --accent-ink: #1A0F08; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #0F0D0B; --ink: #F3ECE2; --ink-2: #A89F94; --line: #2A241E; --accent: #FB8A4C; --accent-ink: #1A0F08; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--sans); display: flex; flex-direction: column; }
+.wrap { width: min(1200px, 100% - 32px); margin: 0 auto; }
+header { padding: 20px 0; }
+.brand { display: inline-flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-weight: 650; font-size: 1.35rem; letter-spacing: -0.04em; }
+.mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: #C2410C; color: #fff; font-size: 1.1rem; }
+main { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; padding: 8px 0 48px; }
+h1 { margin: 0; font-weight: 300; font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1.1; }
+video { width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; background: #0F0D0B; border: 1px solid var(--line); display: block; }
+p { margin: 0; color: var(--ink-2); }
+.cta { display: inline-block; margin-top: 4px; padding: 12px 22px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); text-decoration: none; font-weight: 550; }
+</style>
+</head>
+<body>
+<header class="wrap"><a class="brand" href="https://thela.site/"><span class="mark" aria-hidden="true">t</span>thela</a></header>
+<main class="wrap">
+  <h1>Stop chasing screenshots. Thela in 33 seconds.</h1>
+  <video controls playsinline preload="metadata" poster="media/thela-ad-poster.jpg">
+    <source src="media/thela-ad.mp4" type="video/mp4">
+    Your browser can't play this video. <a href="media/thela-ad.mp4">Download it</a>.
+  </video>
+  <p>The store in the ad is Thela's demo store, a made-up example. Sound on for the full effect.</p>
+  <div><a class="cta" href="https://thela.site/#apply">Apply as a founding creator</a></div>
+</main>
+</body>
+</html>

@@ -14,7 +14,7 @@ $files = @(
   'pages',
   'stores\_template.html', 'stores\demo.json', 'stores\_site.json', 'stores\vendor',
   'scripts\build.ps1', 'scripts\serve.ps1', 'scripts\shots.js', 'scripts\store-test.js', 'scripts\export-repo.ps1',
-  'site\index.html', 'site\about.html', 'site\s\demo'
+  'site\index.html', 'site\about.html', 'site\ad.html', 'site\media', 'site\s\demo'
 )
 foreach ($f in $files) {
   $from = Join-Path $src $f
