@@ -86,7 +86,7 @@ input { width: 100%; min-height: 46px; border: 1px solid var(--line); border-rad
     <section>
       <h2>Test mode</h2>
       <p class="muted">Switch on Easy Split in Cashfree's test mode. Do this once; Cashfree then adds two sample coaches under Easy Split, Vendors.</p>
-      <div><button class="btn" id="easy-split">Switch on Easy Split (test)</button></div>
+      <div class="row"><button class="btn" id="easy-split">Switch on Easy Split (test)</button><button class="btn" id="es-check">Check Easy Split status</button></div>
       <p class="msg" id="es-msg" role="status"></p>
       <p class="muted">Then create the test coach the test store pays (weekly payouts, Cashfree's test bank details). It becomes active in about 10 minutes.</p>
       <div><button class="btn" id="test-vendor">Create test coach</button></div>
@@ -218,8 +218,18 @@ input { width: 100%; min-height: 46px; border: 1px solid var(--line); border-rad
   $('easy-split').addEventListener('click', function () {
     var b = $('easy-split'); b.disabled = true; msg('es-msg', 'Switching on...');
     api({ action: 'enableEasySplit' })
-      .then(function () { b.textContent = 'Enabled'; msg('es-msg', 'Done. Check Cashfree (test mode): Payment Gateway, Easy Split, Vendors.', 'ok'); })
+      .then(function () { b.textContent = 'Requested'; msg('es-msg', 'Cashfree is setting it up. In a minute or two, click Check Easy Split status. Don\x27t click Switch on again.', 'ok'); })
       .catch(function (err) { if (err.message !== 'token') { b.disabled = false; msg('es-msg', 'Cashfree said: ' + err.message, 'err'); } });
+  });
+  $('es-check').addEventListener('click', function () {
+    msg('es-msg', 'Checking...');
+    api({ action: 'easySplitStatus' })
+      .then(function (d) {
+        var active = d.result && d.result.status === 'ACTIVE';
+        if (active) { $('easy-split').disabled = true; $('easy-split').textContent = 'Enabled'; }
+        msg('es-msg', active ? 'Easy Split is on. Now create the test coach.' : 'Not on yet (' + ((d.result && d.result.status) || 'unknown') + '). Check again in a minute.', active ? 'ok' : '');
+      })
+      .catch(function (err) { if (err.message !== 'token') msg('es-msg', 'Cashfree said: ' + err.message, 'err'); });
   });
 
   $('test-vendor').addEventListener('click', function () {

@@ -80,6 +80,10 @@ export async function handle(req, deps) {
       if (isProduction(deps.env)) return json(400, { error: 'production' });
       try { return json(200, { result: await cashfree(deps).enableEasySplitSandbox() }); }
       catch (e) { return json(502, { error: 'gateway', message: e.message }); }
+    case 'easySplitStatus':
+      if (isProduction(deps.env)) return json(400, { error: 'production' });
+      try { return json(200, { result: await cashfree(deps).easySplitSandboxStatus() }); }
+      catch (e) { return json(502, { error: 'gateway', message: e.message }); }
     case 'createTestVendor':
       // Test mode only: a coach on weekly payouts (schedule 11) with Cashfree's published test details.
       if (isProduction(deps.env)) return json(400, { error: 'production' });

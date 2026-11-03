@@ -73,6 +73,14 @@ test('switching on Easy Split and creating a test coach are refused in productio
   assert.equal((await call({ action: 'createTestVendor', vendorId: 'thelatestcoach' })).status, 400);
 });
 
+test('Easy Split is switched on with the documented test-mode call, sent without a body', async () => {
+  const f = fakeFetch({ 'POST https://sandbox.cashfree.com/pg/simulate/easy-split/enable': () => ({ status: 202 }) });
+  const res = await handle(req('/x', { method: 'POST', body: { action: 'enableEasySplit' }, headers: AUTH }), { env: ENV, fetchFn: f, orders: memoryStore(), links: memoryStore() });
+  assert.equal(res.status, 200);
+  assert.equal(f.calls.length, 1);
+  assert.equal(f.calls[0].body, undefined);
+});
+
 test('test coach is created on weekly payouts (schedule 11)', async () => {
   const orders = memoryStore();
   const f = fakeFetch({ 'POST https://sandbox.cashfree.com/pg/easy-split/vendors': () => ({ body: { status: 'ACTIVE' } }) });

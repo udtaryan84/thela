@@ -38,15 +38,13 @@ export function cashfree({ env = process.env, fetchFn = fetch } = {}) {
     getPayments: (orderId) => call('GET', `/orders/${id(orderId)}/payments`),
     refund: (orderId, payload) => call('POST', `/orders/${id(orderId)}/refunds`, payload),
     createVendor: (payload) => call('POST', '/easy-split/vendors', payload),
-    // Test mode only. Cashfree support (ticket 8731949) named the first path; the docs name the second.
-    async enableEasySplitSandbox() {
+    // Test mode only (Cashfree API reference 2026-01-01). No request body; answers 202 and sets up
+    // sample vendors in the background. Not repeatable: each call adds another pair of sample vendors.
+    enableEasySplitSandbox() {
       if (isProduction(env)) throw new CashfreeError(400, 'Only available in test mode.');
-      try { return await call('POST', '/simulation/enable-easy-split-sandbox', {}); }
-      catch (e) {
-        if (e.status !== 404) throw e;
-        return call('POST', '/simulate/easy-split/enable', {});
-      }
-    }
+      return call('POST', '/simulate/easy-split/enable');
+    },
+    easySplitSandboxStatus: () => call('GET', '/simulate/easy-split/status')
   };
 }
 
