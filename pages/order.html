@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your order on Thela</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%279%27 fill=%27%23C2410C%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-family=%27Arial,sans-serif%27 font-weight=%27700%27 font-size=%2720%27 text-anchor=%27middle%27 fill=%27white%27%3Et%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@500&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* The page a buyer lands on after paying. Shows the product only once Thela has confirmed the payment. */
+:root {
+  --bg: #FFFFFF; --soft: #F7F7F5; --ink: #0B0B0A; --ink-2: #4A4844; --line: #E6E6E6;
+  --accent: #C2410C; --accent-hover: #A93A0B; --accent-ink: #FFFFFF; --accent-soft: #FDEADF; --err: #B42318;
+  --sans: "Geist", "Noto Sans Devanagari", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E0E0D; --soft: #1B1A18; --ink: #F2F1EE; --ink-2: #ABA7A0; --line: #2B2A27;
+    --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418; --err: #F87171; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E0E0D; --soft: #1B1A18; --ink: #F2F1EE; --ink-2: #ABA7A0; --line: #2B2A27;
+  --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418; --err: #F87171; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--sans); }
+a { color: inherit; text-underline-offset: .2em; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+[hidden] { display: none !important; }
+.page { max-width: 480px; margin-inline: auto; padding: 48px 16px 64px; display: grid; gap: 24px; }
+.card { display: grid; gap: 14px; justify-items: center; text-align: center; padding: 28px 20px; border-radius: 24px; background: var(--soft); }
+.mark { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 1.9rem; font-weight: 700; }
+.mark.err { color: var(--err); }
+.spin { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+h1 { margin: 0; font-size: 1.6rem; font-weight: 400; letter-spacing: -0.02em; line-height: 1.2; }
+p { margin: 0; }
+.muted { color: var(--ink-2); font-size: 15px; }
+.item { font-weight: 600; }
+.btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; padding: 10px 20px; border-radius: 50px; font-weight: 600; font-size: 16px; text-decoration: none; border: 1px solid transparent; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { border-color: var(--ink); }
+.code { font-family: var(--mono); font-size: 14px; word-break: break-all; }
+.foot { text-align: center; font-size: 13px; color: var(--ink-2); }
+.foot a { display: inline-block; padding: 12px 4px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="card" id="card" aria-live="polite">
+    <div class="spin" id="spin" aria-hidden="true"></div>
+    <div class="mark" id="mark" aria-hidden="true" hidden></div>
+    <h1 id="head"></h1>
+    <p class="item" id="item" hidden></p>
+    <p class="muted" id="text"></p>
+    <a class="btn btn-primary" id="action" hidden rel="noopener"></a>
+    <a class="btn btn-secondary" id="help" hidden rel="noopener"></a>
+    <p class="muted" id="keep" hidden></p>
+  </section>
+  <p class="foot"><a href="/">Store by Thela</a> &middot; <a href="/about.html#privacy">Privacy</a></p>
+</main>
+<script>
+(function () {
+  var WHATSAPP = '917800033210'; // Thela's WhatsApp, same as stores/_site.json
+  var T = {
+    en: {
+      checking: 'Confirming your payment', checkingText: 'This takes a few seconds. Please keep this page open.',
+      slow: 'Still confirming your payment', slowText: 'Please don\x27t pay again. Reload this page in a minute, or message Thela on WhatsApp with your order id.',
+      paid: 'Payment received', keep: 'Save this page to get back to your order. Order id:',
+      noLink: 'Your link is on its way. Thela will send it to you on WhatsApp soon.',
+      failed: 'Your payment didn\x27t go through', failedText: 'No money was taken for this order. You can try again.',
+      tryAgain: 'Try again', refunded: 'This order was refunded', refundedText: 'The money has been sent back to you.',
+      notFound: 'We couldn\x27t find this order', notFoundText: 'Check the link you were given, or message Thela on WhatsApp.',
+      help: 'Message Thela on WhatsApp', home: 'Go to Thela',
+      btn: { file: 'Download', course: 'Open course', call: 'Book your call', plan: 'Open this month\x27s plan' },
+      msg: 'Hi Thela, about my order {id}.'
+    },
+    hi: {
+      checking: 'आपका payment confirm हो रहा है', checkingText: 'बस कुछ सेकंड। कृपया यह page खुला रखें।',
+      slow: 'Payment अभी confirm हो रहा है', slowText: 'कृपया दोबारा pay न करें। एक मिनट बाद page reload करें, या अपने order id के साथ Thela को WhatsApp करें।',
+      paid: 'Payment मिल गया', keep: 'अपने order पर वापस आने के लिए यह page save कर लें। Order id:',
+      noLink: 'आपका link आ रहा है। Thela जल्द ही इसे WhatsApp पर भेजेगा।',
+      failed: 'आपका payment नहीं हो पाया', failedText: 'इस order के लिए कोई पैसा नहीं कटा। आप फिर से कोशिश कर सकते हैं।',
+      tryAgain: 'फिर से कोशिश करें', refunded: 'इस order का refund हो चुका है', refundedText: 'पैसा आपको वापस भेज दिया गया है।',
+      notFound: 'यह order नहीं मिला', notFoundText: 'आपको मिला link जाँचें, या Thela को WhatsApp करें।',
+      help: 'WhatsApp पर Thela से बात करें', home: 'Thela पर जाएँ',
+      btn: { file: 'Download करें', course: 'Course खोलें', call: 'अपनी call book करें', plan: 'इस महीने का plan खोलें' },
+      msg: 'नमस्ते Thela, मेरे order {id} के बारे में।'
+    }
+  };
+  var id = new URLSearchParams(location.search).get('id') || '';
+  var t = T.en, tries = 0;
+  function $(x) { return document.getElementById(x); }
+  function wa() { return 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(t.msg.replace('{id}', id)); }
+  function show(o) {
+    $('spin').hidden = !o.spin; $('mark').hidden = !o.mark;
+    $('mark').textContent = o.mark || ''; $('mark').className = 'mark' + (o.err ? ' err' : '');
+    $('head').textContent = o.head; $('text').textContent = o.text || '';
+    $('item').hidden = !o.item; $('item').textContent = o.item || '';
+    $('action').hidden = !o.action;
+    if (o.action) { $('action').textContent = o.action; $('action').href = o.href; if (o.blank) $('action').target = '_blank'; else $('action').removeAttribute('target'); }
+    $('help').hidden = !o.help; if (o.help) { $('help').textContent = t.help; $('help').href = wa(); }
+    $('keep').hidden = !o.keep; if (o.keep) $('keep').innerHTML = '';
+    if (o.keep) { $('keep').appendChild(document.createTextNode(t.keep + ' ')); var c = document.createElement('span'); c.className = 'code'; c.textContent = id; $('keep').appendChild(c); }
+    document.title = o.head + ' | Thela';
+  }
+  function render(d) {
+    if (d.lang && T[d.lang]) { t = T[d.lang]; document.documentElement.lang = d.lang; }
+    if (d.status === 'PAID') {
+      if (d.link) show({ mark: '✓', head: t.paid, item: d.title, action: t.btn[d.type] || t.btn.file, href: d.link, blank: true, keep: true });
+      else show({ mark: '✓', head: t.paid, item: d.title, text: t.noLink, help: true, keep: true });
+      return true;
+    }
+    if (d.status === 'FAILED') { show({ mark: '!', err: true, head: t.failed, text: t.failedText, action: t.tryAgain, href: '/s/' + encodeURIComponent(d.store) + '/' }); return true; }
+    if (d.status === 'REFUNDED') { show({ mark: '✓', head: t.refunded, item: d.title, text: t.refundedText, help: true }); return true; }
+    if (d.status === 'NOT_FOUND') { show({ mark: '?', err: true, head: t.notFound, text: t.notFoundText, action: t.home, href: '/', help: true }); return true; }
+    return false;
+  }
+  function check() {
+    tries++;
+    fetch('/.netlify/functions/order-status?id=' + encodeURIComponent(id), { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { if (!render(d)) next(); })
+      .catch(next);
+  }
+  function next() {
+    if (tries >= 20) { show({ mark: '…', head: t.slow, text: t.slowText, help: true, keep: true }); return; }
+    setTimeout(check, 3000);
+  }
+  show({ spin: true, head: t.checking, text: t.checkingText });
+  if (!/^TH[A-Za-z0-9]{20}$/.test(id)) render({ status: 'NOT_FOUND' }); else check();
+})();
+</script>
+</body>
+</html>

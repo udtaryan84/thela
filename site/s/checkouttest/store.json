@@ -1,0 +1,33 @@
+{
+    "slug":  "checkouttest",
+    "name":  "Checkout Test Coach",
+    "lang":  "en",
+    "checkout":  "cashfree",
+    "vendorId":  "thelatestcoach",
+    "products":  [
+                     {
+                         "title":  "Home workout plan",
+                         "price":  1,
+                         "monthly":  false,
+                         "type":  "file"
+                     },
+                     {
+                         "title":  "Yoga basics course",
+                         "price":  2,
+                         "monthly":  false,
+                         "type":  "course"
+                     },
+                     {
+                         "title":  "1:1 coaching call",
+                         "price":  3,
+                         "monthly":  false,
+                         "type":  "call"
+                     },
+                     {
+                         "title":  "Monthly coaching",
+                         "price":  1000,
+                         "monthly":  true,
+                         "type":  "plan"
+                     }
+                 ]
+}

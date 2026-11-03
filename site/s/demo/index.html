@@ -130,6 +130,7 @@ img { display: block; max-width: 100%; }
   <form class="step" id="step-1" novalidate>
     <div class="field"><label for="b-name" id="l-name"></label><input id="b-name" autocomplete="name"></div>
     <div class="field"><label for="b-email" id="l-email"></label><input id="b-email" type="email" autocomplete="email" inputmode="email"></div>
+    <div class="field" id="phone-field" hidden><label for="b-phone" id="l-phone"></label><input id="b-phone" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="14"></div>
     <label class="check"><input type="checkbox" id="b-age"><span id="l-age"></span></label>
     <p class="err" id="err" role="alert"></p>
     <button class="btn btn-primary" type="submit" id="to-pay"></button>
@@ -2477,7 +2478,14 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
       msgMonth: "Hi {name}, I've paid {amt} for {item} (this month). Order {code}. My name: {buyer}. My email: {email}.",
       soldBy: 'Sold by', refunds: 'Refunds', delivery: 'Delivery', payments: 'Payments go straight to {payee}\'s UPI account. Thela builds this page and never handles the money, so refunds always come from the creator, not Thela.',
       report: 'Report this store', privacy: 'Privacy', madeWith: 'Store by Thela', demo: 'Demo store. Nothing here is real, and no payment goes anywhere.',
-      test: 'Test page for checking payments. Not a real store.', deliveryLine: 'Sent {delivery} after the payment is checked.'
+      test: 'Test page for checking payments. Not a real store.', deliveryLine: 'Sent {delivery} after the payment is checked.',
+      phone: 'Your phone number', needPhone: 'Please add your 10-digit mobile number.', payNow: 'Pay {amt}', opening: 'Opening payment...',
+      errGateway: 'We couldn\x27t start the payment. Nothing was charged. Please try again in a minute.',
+      errSdk: 'The payment window didn\x27t open. Check your internet and tap Pay again.',
+      errForm: 'Please check your name, email and phone number.',
+      coTitle: 'Protected by Thela', co1: 'You pay through Cashfree, Thela\x27s payment partner. {name} is paid every week, not straight away.',
+      co2: 'If {name} doesn\x27t deliver, tell Thela. We refund you from the money not yet paid to {name}.',
+      coDelivery: 'Straight after payment, on the next page.', coPayments: 'Payments go through Cashfree, a licensed payment company. Refunds are made by Thela.'
     },
     hi: {
       close: 'बंद करें', name: 'आपका नाम', email: 'आपका email', age: 'मेरी उम्र 18 साल या उससे ज़्यादा है, या माता-पिता pay कर रहे हैं।',
@@ -2493,10 +2501,19 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
       msgMonth: 'नमस्ते {name}, मैंने {item} (इस महीने) के लिए {amt} pay कर दिए हैं। Order {code}. मेरा नाम: {buyer}. मेरा email: {email}.',
       soldBy: 'Seller', refunds: 'Refund', delivery: 'Delivery', payments: 'Payment सीधे {payee} के UPI account में जाता है। Thela यह page बनाता है, पैसे कभी नहीं छूता।',
       report: 'इस store की शिकायत करें', privacy: 'Privacy', madeWith: 'Store by Thela', demo: 'Demo store. यहाँ कुछ भी असली नहीं है, कोई payment कहीं नहीं जाता।',
-      test: 'Payment जाँचने का test page. असली store नहीं।', deliveryLine: 'Payment देखने के बाद {delivery} भेजा जाता है।'
+      test: 'Payment जाँचने का test page. असली store नहीं।', deliveryLine: 'Payment देखने के बाद {delivery} भेजा जाता है।',
+      phone: 'आपका phone number', needPhone: 'कृपया अपना 10 अंकों का mobile number डालें।', payNow: '{amt} pay करें', opening: 'Payment खुल रहा है...',
+      errGateway: 'Payment शुरू नहीं हो पाया। कोई पैसा नहीं कटा। कृपया एक मिनट बाद फिर कोशिश करें।',
+      errSdk: 'Payment window नहीं खुली। अपना internet देखें और फिर से Pay दबाएँ।',
+      errForm: 'कृपया अपना नाम, email और phone number जाँच लें।',
+      coTitle: 'Thela की सुरक्षा', co1: 'आप Cashfree से pay करते हैं, जो Thela का payment partner है। {name} को पैसा हर हफ़्ते मिलता है, तुरंत नहीं।',
+      co2: 'अगर {name} सामान नहीं भेजते, तो Thela को बताइए। जो पैसा अभी {name} को नहीं मिला है, उसमें से हम आपको refund करेंगे।',
+      coDelivery: 'Payment के तुरंत बाद, अगले page पर।', coPayments: 'Payment Cashfree से होता है, जो एक licensed payment company है। Refund Thela करता है।'
     }
   };
   var t = T[STORE.lang] || T.en;
+  // Checkout stores take payment through Cashfree (netlify/functions); other stores keep the UPI QR flow.
+  var CO = STORE.checkout === 'cashfree';
   var inr = new Intl.NumberFormat('en-IN');
   function rupees(n) { return '₹' + inr.format(n); }
   function fill(s, v) { return s.replace(/\{(\w+)\}/g, function (m, k) { return v[k] != null ? v[k] : m; }); }
@@ -2519,13 +2536,14 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
   });
   var first = STORE.name.split(' ')[0];
   var report = function (code) { if (STORE.demo) return '#'; return 'https://wa.me/' + SITE.whatsapp + '?text=' + encodeURIComponent(fill(t.reportMsg, { store: STORE.name, code: code || '' })); };
-  html += '</ul><section class="promise" aria-label="' + esc(t.promiseTitle) + '"><b>' + esc(t.promiseTitle) + '</b><p>' + esc(fill(t.promise1, { upi: STORE.upi.id, payee: STORE.upi.payee })) + '</p><p>' + esc(fill(t.promise2, { delivery: STORE.delivery, name: first })) + '</p><a href="' + esc(report()) + '" rel="noopener">' + esc(t.promiseLink) + '</a></section>';
+  if (CO) html += '</ul><section class="promise" aria-label="' + esc(t.coTitle) + '"><b>' + esc(t.coTitle) + '</b><p>' + esc(fill(t.co1, { name: first })) + '</p><p>' + esc(fill(t.co2, { name: first })) + '</p><a href="' + esc(report()) + '" rel="noopener">' + esc(t.promiseLink) + '</a></section>';
+  else html += '</ul><section class="promise" aria-label="' + esc(t.promiseTitle) + '"><b>' + esc(t.promiseTitle) + '</b><p>' + esc(fill(t.promise1, { upi: STORE.upi.id, payee: STORE.upi.payee })) + '</p><p>' + esc(fill(t.promise2, { delivery: STORE.delivery, name: first })) + '</p><a href="' + esc(report()) + '" rel="noopener">' + esc(t.promiseLink) + '</a></section>';
   html += '<section class="info"><p><b>' + esc(t.soldBy) + ':</b> ' + esc(STORE.name) + ', ' + esc(STORE.city) + '</p>' +
     (STORE.whatsapp && !STORE.demo ? '<p><b>' + esc(t.contact) + ':</b> <a href="https://wa.me/' + esc(STORE.whatsapp) + '">WhatsApp +' + esc(STORE.whatsapp.slice(0, 2) + ' ' + STORE.whatsapp.slice(2, 7) + ' ' + STORE.whatsapp.slice(7)) + '</a></p>' : '') +
     (STORE.email && !STORE.demo ? '<p><b>Email:</b> <a href="mailto:' + esc(STORE.email) + '">' + esc(STORE.email) + '</a></p>' : '') +
-    '<p><b>' + esc(t.delivery) + ':</b> ' + esc(fill(t.deliveryLine, { delivery: STORE.delivery })) + '</p>' +
+    '<p><b>' + esc(t.delivery) + ':</b> ' + esc(CO ? t.coDelivery : fill(t.deliveryLine, { delivery: STORE.delivery })) + '</p>' +
     '<p><b>' + esc(t.refunds) + ':</b> ' + esc(STORE.refund) + '</p>' +
-    '<p>' + esc(fill(t.payments, { payee: STORE.upi.payee })) + '</p></section>' +
+    '<p>' + esc(CO ? t.coPayments : fill(t.payments, { payee: STORE.upi.payee })) + '</p></section>' +
     '<footer class="footer"><a href="/">' + esc(t.madeWith) + '</a> &middot; <a href="/about.html#privacy">' + esc(t.privacy) + '</a> &middot; ' +
     '<a href="mailto:' + esc(SITE.email) + '?subject=' + encodeURIComponent('Report: ' + STORE.slug) + '">' + esc(t.report) + '</a></footer>';
   $('page').innerHTML = html;
@@ -2533,6 +2551,7 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
   // Static labels in the sheet
   $('close').setAttribute('aria-label', t.close); $('close').textContent = '×';
   $('l-name').textContent = t.name; $('l-email').textContent = t.email; $('l-age').textContent = t.age;
+  $('l-phone').textContent = t.phone; $('phone-field').hidden = !CO;
   $('to-pay').textContent = t.next; $('save-qr').textContent = t.saveQr;
   $('or').textContent = t.or; $('l-code').textContent = t.code;
   $('cancel-order').textContent = t.cancel; $('copy-upi').textContent = t.copy; $('copy-code').textContent = t.copy; $('paid').textContent = t.paid;
@@ -2558,7 +2577,9 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
     var p = STORE.products[o.i];
     var note = (o.code + ' ' + p.title).slice(0, 40);
     // The UPI ID goes in as is: some UPI apps fail on an encoded @ (%40). build.ps1 only allows letters, digits, . _ - and one @.
-    return 'pa=' + STORE.upi.id + '&pn=' + encodeURIComponent(STORE.upi.payee) +
+    // Business (merchant) UPI IDs: "mc" is the merchant category code from the creator's business QR; "tr" carries the order code.
+    var biz = STORE.upi.mc ? '&mc=' + STORE.upi.mc + '&tr=' + o.code : '';
+    return 'pa=' + STORE.upi.id + '&pn=' + encodeURIComponent(STORE.upi.payee) + biz +
       (noAmount ? '' : '&am=' + p.price.toFixed(2)) + '&cu=INR&tn=' + encodeURIComponent(note);
   }
   function upiLink(o) { return 'upi://pay?' + upiQuery(o); }
@@ -2584,7 +2605,7 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
     $('sheet-amount').textContent = rupees(p.price) + (p.monthly ? ' ' + t.perMonth : '');
     if (!opener) opener = document.activeElement;
     $('scrim').hidden = false; $('sheet').hidden = false; $('page').inert = true; document.body.style.overflow = 'hidden';
-    if (o.step >= 2) toPay(); else { show(1); $('b-name').value = o.buyer || ''; $('b-email').value = o.email || ''; $('b-age').checked = false; $('err').textContent = ''; $('b-name').focus({ preventScroll: true }); }
+    if (o.step >= 2 && !CO) toPay(); else { show(1); $('b-name').value = o.buyer || ''; $('b-email').value = o.email || ''; $('b-phone').value = o.phone || ''; $('b-age').checked = false; $('err').textContent = ''; resetPay(); $('b-name').focus({ preventScroll: true }); }
   }
   function closeSheet() {
     $('scrim').hidden = true; $('sheet').hidden = true; $('page').inert = false; document.body.style.overflow = '';
@@ -2636,10 +2657,58 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
     var email = $('b-email').value.trim();
     if (!$('b-name').value.trim()) { $('err').textContent = t.needName; $('b-name').focus(); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $('err').textContent = t.needEmail; $('b-email').focus(); return; }
+    var phone = $('b-phone').value.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+    if (CO && !/^[6-9]\d{9}$/.test(phone)) { $('err').textContent = t.needPhone; $('b-phone').focus(); return; }
     if (!$('b-age').checked) { $('err').textContent = t.needAge; $('b-age').focus(); return; }
     order.buyer = $('b-name').value.trim(); order.email = email;
-    toPay();
+    if (CO) { order.phone = phone; save(); payByCheckout(); } else toPay();
   });
+
+  // Checkout: ask Thela's server for a Cashfree order at the store's price, then open Cashfree's page.
+  function resetPay() {
+    if (!CO || !order) return;
+    $('to-pay').disabled = false;
+    var p = STORE.products[order.i];
+    $('to-pay').textContent = fill(t.payNow, { amt: rupees(p.price) + (p.monthly ? ' ' + t.perMonth : '') });
+  }
+  function loadSdk() {
+    return new Promise(function (ok, fail) {
+      if (window.Cashfree) return ok();
+      var s = document.createElement('script');
+      s.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+      var timer = setTimeout(function () { fail(new Error('sdk timeout')); }, 10000);
+      s.onload = function () { clearTimeout(timer); window.Cashfree ? ok() : fail(new Error('sdk')); };
+      s.onerror = function () { clearTimeout(timer); fail(new Error('sdk')); };
+      document.head.appendChild(s);
+    });
+  }
+  function payByCheckout() {
+    var btn = $('to-pay');
+    if (btn.disabled) return;
+    btn.disabled = true; btn.textContent = t.opening; $('err').textContent = '';
+    var created;
+    fetch('/.netlify/functions/create-order', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ store: STORE.slug, product: order.i, name: order.buyer, email: order.email, phone: order.phone })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (!r.ok) throw new Error(r.status === 400 ? 'form' : 'gateway');
+        created = d;
+      });
+    }).then(function () {
+      return loadSdk().catch(function () { throw new Error('sdk'); });
+    }).then(function () {
+      return window.Cashfree({ mode: created.mode }).checkout({ paymentSessionId: created.paymentSessionId, redirectTarget: '_self' });
+    }).then(function (result) {
+      // Cashfree reports a failed checkout as { error } rather than throwing.
+      if (result && result.error) throw new Error('gateway');
+    }).catch(function (e) {
+      $('err').textContent = e.message === 'form' ? t.errForm : e.message === 'sdk' ? t.errSdk : t.errGateway;
+      resetPay();
+    });
+  }
+  // Coming back with the browser's Back button: the sheet is ready to pay again, details kept.
+  window.addEventListener('pageshow', function (e) { if (e.persisted) resetPay(); });
   // Some in-app browsers block the clipboard. Only say "Copied" when it worked;
   // otherwise select the text so the buyer can press and hold to copy it.
   function copier(btn, target) {

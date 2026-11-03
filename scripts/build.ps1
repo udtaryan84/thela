@@ -27,7 +27,7 @@ $html = $head + $src.Substring(0, $split) + "</head>`n<body>`n" + $src.Substring
 $tpl = Get-Content -Raw -Encoding UTF8 "$root\stores\_template.html"
 $qrlib = Get-Content -Raw -Encoding UTF8 "$root\stores\vendor\qrcode.js"
 $site = Get-Content -Raw -Encoding UTF8 "$root\stores\_site.json" | ConvertFrom-Json
-$built = @(); $problems = @(); $storePages = @{}
+$built = @(); $problems = @(); $storePages = @{}; $storeData = @{}
 foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -notlike '_*' }) {
   try { $s = Get-Content -Raw -Encoding UTF8 $f.FullName | ConvertFrom-Json }
   catch { $problems += "$($f.Name): not valid settings (check the commas, quote marks and brackets against demo.json)"; continue }
@@ -36,11 +36,16 @@ foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -not
   if ($s.slug -ne $f.BaseName) { $p += "slug must be '$($f.BaseName)' (the file name)" }
   if ($s.slug -notmatch '^[a-z0-9]{3,30}$') { $p += "slug: 3 to 30 lowercase letters or numbers" }
   foreach ($k in 'name', 'city', 'delivery', 'refund') { if (-not $s.$k) { $p += "missing '$k'" } }
-  if (-not $s.upi.id -or -not $s.upi.payee) { $p += "missing upi id or payee name" }
+  $checkout = $s.checkout -eq 'cashfree'
+  if ($s.checkout -and -not $checkout) { $p += "checkout must be 'cashfree' or left out" }
+  if ($checkout -and $s.vendorId -notmatch '^[A-Za-z0-9_-]{1,50}$') { $p += "vendorId needed for checkout (the coach's Cashfree vendor id)" }
+  foreach ($x in @($s.products)) { if ($x.type -and $x.type -notin 'file', 'course', 'call', 'plan') { $p += "product '$($x.title)' type must be file, course, call or plan" } }
+  if (-not $checkout -and (-not $s.upi.id -or -not $s.upi.payee)) { $p += "missing upi id or payee name" }
   if (-not $s.products -or @($s.products).Count -eq 0) { $p += "no products" }
   foreach ($x in @($s.products)) { if (-not $x.title -or -not ($x.price -is [int] -or $x.price -is [long]) -or $x.price -lt 1) { $p += "product '$($x.title)' needs a title and a whole-rupee price" } }
   if (-not $s.demo) {
-    if ($s.upi.id -notmatch '^[A-Za-z0-9._-]{2,}@[A-Za-z0-9]{2,}$') { $p += "upi id '$($s.upi.id)' doesn't look like a UPI ID" }
+    if (-not $checkout -and $s.upi.id -notmatch '^[A-Za-z0-9._-]{2,}@[A-Za-z0-9]{2,}$') { $p += "upi id '$($s.upi.id)' doesn't look like a UPI ID" }
+    if ($s.upi.mc -and $s.upi.mc -notmatch '^[0-9]{4}$') { $p += "upi mc (merchant code) must be 4 digits, from the business QR" }
     if ($s.paidVia -eq 'email') { if ($s.email -notmatch '^[^\s@]+@[^\s@]+\.[^\s@]+$') { $p += "email needed when paidVia is email" } }
     elseif ($s.whatsapp -notmatch '^91[6-9][0-9]{9}$') { $p += "whatsapp must be 91 followed by the 10-digit number, digits only" }
   }
@@ -55,6 +60,14 @@ foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -not
     Replace('{{ROBOTS}}', $(if ($s.demo -or $s.test) { '<meta name="robots" content="noindex">' } else { '' })).
     Replace('{{QRLIB}}', $qrlib).Replace('{{SITE}}', ($site | ConvertTo-Json -Compress)).Replace('{{DATA}}', $json)
   $storePages[$s.slug] = $page
+  # Checkout stores also get store.json: the prices and vendor id the checkout functions trust.
+  # Public settings only; delivery links never go here (they live in Netlify Blobs).
+  if ($checkout) {
+    $storeData[$s.slug] = [ordered]@{
+      slug = $s.slug; name = $s.name; lang = $(if ($s.lang -eq 'hi') { 'hi' } else { 'en' }); checkout = 'cashfree'; vendorId = $s.vendorId
+      products = @($s.products | ForEach-Object { [ordered]@{ title = $_.title; price = $_.price; monthly = [bool]$_.monthly; type = $(if ($_.type) { $_.type } elseif ($_.monthly) { 'plan' } else { 'file' }) } })
+    } | ConvertTo-Json -Depth 5
+  }
   $built += $s.slug
 }
 # Any mistake stops the whole build before site/ is touched, so a deploy can never drop a live store.
@@ -69,6 +82,7 @@ if (Test-Path "$root\site\s") { Remove-Item "$root\site\s" -Recurse -Force }
 foreach ($slug in $storePages.Keys) {
   New-Item -ItemType Directory -Force "$root\site\s\$slug" | Out-Null
   [IO.File]::WriteAllText("$root\site\s\$slug\index.html", $storePages[$slug], $utf8)
+  if ($storeData[$slug]) { [IO.File]::WriteAllText("$root\site\s\$slug\store.json", $storeData[$slug], $utf8) }
 }
 Write-Host "Stores built: $($built -join ', ')"
 

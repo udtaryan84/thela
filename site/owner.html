@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Thela owner page</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Private page for the owner: orders, refunds, delivery links. Everything here needs ADMIN_TOKEN. */
+:root {
+  --bg: #FFFFFF; --soft: #F7F7F5; --ink: #0B0B0A; --ink-2: #4A4844; --line: #E6E6E6;
+  --accent: #C2410C; --accent-hover: #A93A0B; --accent-ink: #FFFFFF; --accent-soft: #FDEADF; --ok: #1E7F42; --err: #B42318;
+  --sans: "Geist", "Segoe UI", system-ui, -apple-system, sans-serif; --mono: "Geist Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E0E0D; --soft: #1B1A18; --ink: #F2F1EE; --ink-2: #ABA7A0; --line: #2B2A27;
+    --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418; --ok: #4ADE80; --err: #F87171; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E0E0D; --soft: #1B1A18; --ink: #F2F1EE; --ink-2: #ABA7A0; --line: #2B2A27;
+  --accent: #FB8A4C; --accent-hover: #FFA06A; --accent-ink: #1A0F08; --accent-soft: #3A2418; --ok: #4ADE80; --err: #F87171; color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.5 var(--sans); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+[hidden] { display: none !important; }
+.page { max-width: 720px; margin-inline: auto; padding: 32px 16px 64px; display: grid; gap: 28px; }
+h1 { margin: 0; font-size: 1.8rem; font-weight: 400; letter-spacing: -0.02em; }
+h2 { margin: 0; font-size: 1.2rem; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 12px; }
+.muted { color: var(--ink-2); font-size: 14px; }
+label { font-size: 14px; font-weight: 500; display: grid; gap: 6px; }
+input { width: 100%; min-height: 46px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: 500 16px var(--sans); padding: 8px 12px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 18px; border-radius: 50px; border: 1px solid var(--ink); background: var(--bg); color: var(--ink); font: 600 15px var(--sans); cursor: pointer; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:disabled { opacity: .5; cursor: default; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.row > label { flex: 1 1 200px; }
+.order { border: 1px solid var(--line); border-radius: 16px; padding: 14px; display: grid; gap: 8px; }
+.order.attention { border-color: var(--accent); }
+.order .top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-weight: 600; }
+.tag { font: 500 12px var(--mono); padding: 2px 8px; border-radius: 50px; background: var(--soft); }
+.id { font: 500 12px var(--mono); color: var(--ink-2); word-break: break-all; }
+.msg { font-size: 14px; min-height: 1.2em; }
+.msg.ok { color: var(--ok); } .msg.err { color: var(--err); }
+.confirm { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; font-size: 14px; }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>Owner page</h1>
+
+  <section id="login">
+    <p class="muted">Paste your owner password (ADMIN_TOKEN from Netlify). It stays in this browser tab only.</p>
+    <form class="row" id="login-form">
+      <label>Owner password<input id="token" type="password" autocomplete="current-password"></label>
+      <button class="btn btn-primary" type="submit">Open</button>
+    </form>
+    <p class="msg err" id="login-msg" role="alert"></p>
+  </section>
+
+  <div id="app" hidden>
+    <section>
+      <div class="row" style="justify-content: space-between; align-items: center"><h2>Orders</h2><button class="btn" id="reload">Refresh</button></div>
+      <p class="msg" id="orders-msg" role="status"></p>
+      <div id="orders" style="display: grid; gap: 10px"></div>
+    </section>
+
+    <section>
+      <h2>Delivery links</h2>
+      <p class="muted">The link each buyer gets after paying (Google Drive file, course page, booking page). Links must start with https://.</p>
+      <form class="row" id="store-form">
+        <label>Store name in the address (/s/<b>name</b>/)<input id="store-slug" autocomplete="off" pattern="[a-z0-9]{3,30}"></label>
+        <button class="btn" type="submit">Load products</button>
+      </form>
+      <form id="links-form" hidden style="display: grid; gap: 10px"></form>
+      <p class="msg" id="links-msg" role="status"></p>
+    </section>
+
+    <section>
+      <h2>Test mode</h2>
+      <p class="muted">Switch on Easy Split in Cashfree's test mode. Do this once; Cashfree then adds two sample coaches under Easy Split, Vendors.</p>
+      <div><button class="btn" id="easy-split">Switch on Easy Split (test)</button></div>
+      <p class="msg" id="es-msg" role="status"></p>
+      <p class="muted">Then create the test coach the test store pays (weekly payouts, Cashfree's test bank details). It becomes active in about 10 minutes.</p>
+      <div><button class="btn" id="test-vendor">Create test coach</button></div>
+      <p class="msg" id="tv-msg" role="status"></p>
+    </section>
+  </div>
+</main>
+<script>
+(function () {
+  var KEY = 'thela-owner-token';
+  function $(x) { return document.getElementById(x); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function msg(id, text, kind) { $(id).textContent = text || ''; $(id).className = 'msg' + (kind ? ' ' + kind : ''); }
+  var inr = new Intl.NumberFormat('en-IN', { maximumFractionDigits: 2 });
+  function rupees(n) { return '₹' + inr.format(n); }
+  function token() { try { return sessionStorage.getItem(KEY) || ''; } catch (e) { return ''; } }
+
+  function api(body) {
+    return fetch('/.netlify/functions/admin', {
+      method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + token() }, body: JSON.stringify(body)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) {
+        if (r.status === 401) { try { sessionStorage.removeItem(KEY); } catch (e) {} $('app').hidden = true; $('login').hidden = false; msg('login-msg', 'That password did not work.', 'err'); throw new Error('token'); }
+        if (!r.ok) { var e = new Error(d.message || d.error || ('Error ' + r.status)); e.data = d; throw e; }
+        return d;
+      });
+    });
+  }
+
+  // Orders: every value goes on screen as plain text (buyers type their own names).
+  function renderOrders(list) {
+    var box = $('orders'); box.textContent = '';
+    if (!list.length) { box.appendChild(el('p', 'muted', 'No orders yet.')); return; }
+    list.sort(function (a, b) { return (b.needsLink ? 1 : 0) - (a.needsLink ? 1 : 0); });
+    list.forEach(function (o) {
+      var card = el('div', 'order' + (o.needsLink ? ' attention' : ''));
+      var top = el('div', 'top');
+      top.appendChild(el('span', '', o.title + ' · ' + rupees(o.price)));
+      top.appendChild(el('span', 'tag', o.status));
+      card.appendChild(top);
+      card.appendChild(el('p', 'muted', (o.buyer ? o.buyer.name + ' · ' + o.buyer.email + ' · ' + o.buyer.phone : '') + ' · ' + o.storeName));
+      card.appendChild(el('p', 'id', o.id + ' · ' + new Date(o.createdAt).toLocaleString('en-IN')));
+      if (o.needsLink) card.appendChild(el('p', 'msg err', 'Paid, but this product has no delivery link yet. Add it below.'));
+      var left = Math.round((o.price - (o.refunded || 0)) * 100) / 100;
+      if (o.refunded) card.appendChild(el('p', 'muted', 'Refunded so far ' + rupees(o.refunded) + ', refundable left ' + rupees(left)));
+      if ((o.status === 'PAID' || o.status === 'PART_REFUNDED') && left > 0) card.appendChild(refundForm(o, left));
+      box.appendChild(card);
+    });
+  }
+
+  function refundForm(o, left) {
+    var wrap = el('div'), form = el('form', 'row'), lab = el('label', '', 'Refund amount'), inp = el('input');
+    inp.type = 'number'; inp.min = '1'; inp.step = '0.01'; inp.max = String(left); inp.value = String(left); inp.inputMode = 'decimal';
+    lab.appendChild(inp); form.appendChild(lab);
+    var go = el('button', 'btn', 'Refund'); go.type = 'submit'; form.appendChild(go);
+    var note = el('p', 'msg'); wrap.appendChild(form); wrap.appendChild(note);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var amount = Math.round(Number(inp.value) * 100) / 100;
+      if (!(amount > 0) || amount > left) { note.textContent = 'Enter an amount up to ' + rupees(left) + '.'; note.className = 'msg err'; return; }
+      // Refunds send money back and cannot be undone: confirm first.
+      var c = el('div', 'confirm');
+      c.appendChild(el('p', '', 'Refund ' + rupees(amount) + ' on order ' + o.id + '? ' + rupees(Math.round((left - amount) * 100) / 100) + ' will be left refundable. This cannot be undone.'));
+      var yes = el('button', 'btn btn-primary', 'Yes, refund'), no = el('button', 'btn', 'Cancel');
+      yes.type = 'button'; no.type = 'button';
+      var r = el('div', 'row'); r.appendChild(yes); r.appendChild(no); c.appendChild(r);
+      form.hidden = true; wrap.insertBefore(c, note);
+      no.onclick = function () { c.remove(); form.hidden = false; };
+      yes.onclick = function () {
+        yes.disabled = true; no.disabled = true;
+        api({ action: 'refund', orderId: o.id, amount: amount }).then(function () { loadOrders('Refund of ' + rupees(amount) + ' sent.'); })
+          .catch(function (err) { if (err.message !== 'token') { c.remove(); form.hidden = false; note.textContent = 'Refund failed: ' + err.message; note.className = 'msg err'; } });
+      };
+    });
+    return wrap;
+  }
+
+  var linkCache = {};
+  function loadOrders(note) {
+    msg('orders-msg', 'Loading...');
+    return api({ action: 'orders' }).then(function (d) {
+      var stores = {}; d.orders.forEach(function (o) { stores[o.store] = true; });
+      return Promise.all(Object.keys(stores).map(function (s) {
+        return api({ action: 'getLinks', store: s }).then(function (l) { linkCache[s] = l.links; });
+      })).then(function () {
+        d.orders.forEach(function (o) { o.needsLink = (o.status === 'PAID' || o.status === 'PART_REFUNDED') && !(linkCache[o.store] || {})[String(o.product)]; });
+        renderOrders(d.orders); msg('orders-msg', note || '', note ? 'ok' : '');
+      });
+    }).catch(function (err) { if (err.message !== 'token') msg('orders-msg', 'Could not load orders: ' + err.message, 'err'); });
+  }
+
+  function start() { $('login').hidden = true; $('app').hidden = false; msg('login-msg', ''); loadOrders(); }
+
+  $('login-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    try { sessionStorage.setItem(KEY, $('token').value.trim()); } catch (err) {}
+    $('token').value = ''; start();
+  });
+  $('reload').addEventListener('click', function () { loadOrders(); });
+
+  // Delivery links per product of one store.
+  $('store-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var slug = $('store-slug').value.trim().toLowerCase(), form = $('links-form');
+    msg('links-msg', 'Loading...'); form.hidden = true;
+    Promise.all([
+      fetch('/s/' + encodeURIComponent(slug) + '/store.json', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('No checkout store called "' + slug + '".'); return r.json(); }),
+      api({ action: 'getLinks', store: slug })
+    ]).then(function (res) {
+      var store = res[0], links = res[1].links; form.textContent = '';
+      store.products.forEach(function (p, i) {
+        var lab = el('label', '', p.title + ' (' + rupees(p.price) + ', ' + p.type + ')'), inp = el('input');
+        inp.type = 'url'; inp.name = String(i); inp.placeholder = 'https://'; inp.value = links[String(i)] || '';
+        lab.appendChild(inp); form.appendChild(lab);
+      });
+      var save = el('button', 'btn btn-primary', 'Save links'); save.type = 'submit'; form.appendChild(save);
+      form.dataset.store = slug; form.hidden = false; msg('links-msg', '');
+    }).catch(function (err) { if (err.message !== 'token') msg('links-msg', err.message, 'err'); });
+  });
+  $('links-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var form = $('links-form'), links = {};
+    Array.prototype.forEach.call(form.querySelectorAll('input'), function (i) { links[i.name] = i.value.trim(); });
+    api({ action: 'saveLinks', store: form.dataset.store, links: links })
+      .then(function () { msg('links-msg', 'Links saved.', 'ok'); loadOrders(); })
+      .catch(function (err) { if (err.message !== 'token') msg('links-msg', err.message === 'link' ? 'Link ' + (Number(err.data.index) + 1) + ' must start with https://' : 'Could not save: ' + err.message, 'err'); });
+  });
+
+  $('easy-split').addEventListener('click', function () {
+    var b = $('easy-split'); b.disabled = true; msg('es-msg', 'Switching on...');
+    api({ action: 'enableEasySplit' })
+      .then(function () { b.textContent = 'Enabled'; msg('es-msg', 'Done. Check Cashfree (test mode): Payment Gateway, Easy Split, Vendors.', 'ok'); })
+      .catch(function (err) { if (err.message !== 'token') { b.disabled = false; msg('es-msg', 'Cashfree said: ' + err.message, 'err'); } });
+  });
+
+  $('test-vendor').addEventListener('click', function () {
+    var b = $('test-vendor'); b.disabled = true; msg('tv-msg', 'Creating...');
+    api({ action: 'createTestVendor', vendorId: 'thelatestcoach' })
+      .then(function () { b.textContent = 'Created'; msg('tv-msg', 'Test coach "thelatestcoach" created on weekly payouts.', 'ok'); })
+      .catch(function (err) { if (err.message !== 'token') { b.disabled = false; msg('tv-msg', 'Cashfree said: ' + err.message, 'err'); } });
+  });
+
+  if (token()) start();
+})();
+</script>
+</body>
+</html>
