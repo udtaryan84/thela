@@ -4,6 +4,7 @@
     "lang":  "en",
     "checkout":  "cashfree",
     "vendorId":  "thelatestcoach",
+    "easySplit":  false,
     "products":  [
                      {
                          "title":  "Home workout plan",

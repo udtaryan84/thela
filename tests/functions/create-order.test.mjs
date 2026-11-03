@@ -66,3 +66,14 @@ test('Cashfree error gives a 502 with a safe message and saves nothing', async (
   assert.equal(data.error, 'gateway');
   assert.equal(orders.map.size, 0);
 });
+
+test('a store with easySplit false pays without a coach split, and its refunds take nothing from the coach', async () => {
+  const noSplit = { ...STORE, easySplit: false };
+  const f = fakeFetch({ ...storeRoute(noSplit), ...cashfreeOk });
+  const orders = memoryStore();
+  const res = await handle(req('/x', { method: 'POST', body: { store: 'checkouttest', product: 1, ...buyer } }), { env: ENV, fetchFn: f, orders });
+  assert.equal(res.status, 200);
+  const sent = f.calls.find((c) => c.url.endsWith('/pg/orders')).body;
+  assert.equal('order_splits' in sent, false);
+  assert.equal((await orders.get((await res.json()).orderId)).vendorPercent, 0);
+});

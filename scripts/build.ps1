@@ -64,7 +64,7 @@ foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -not
   # Public settings only; delivery links never go here (they live in Netlify Blobs).
   if ($checkout) {
     $storeData[$s.slug] = [ordered]@{
-      slug = $s.slug; name = $s.name; lang = $(if ($s.lang -eq 'hi') { 'hi' } else { 'en' }); checkout = 'cashfree'; vendorId = $s.vendorId
+      slug = $s.slug; name = $s.name; lang = $(if ($s.lang -eq 'hi') { 'hi' } else { 'en' }); checkout = 'cashfree'; vendorId = $s.vendorId; easySplit = ($s.easySplit -ne $false)
       products = @($s.products | ForEach-Object { [ordered]@{ title = $_.title; price = $_.price; monthly = [bool]$_.monthly; type = $(if ($_.type) { $_.type } elseif ($_.monthly) { 'plan' } else { 'file' }) } })
     } | ConvertTo-Json -Depth 5
   }

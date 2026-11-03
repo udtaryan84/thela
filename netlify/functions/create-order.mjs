@@ -26,7 +26,10 @@ export async function handle(req, { env, fetchFn, orders }) {
   if (!product) return json(400, { error: 'product' });
 
   const fee = Number(env.THELA_FEE_PERCENT ?? DEFAULT_FEE_PERCENT);
-  const vendorPercent = Math.round((100 - (Number.isFinite(fee) && fee >= 0 && fee < 100 ? fee : DEFAULT_FEE_PERCENT)) * 100) / 100;
+  // A store can pay without Easy Split ("easySplit": false) while Cashfree has not switched it on;
+  // the whole payment then stays with Thela and no coach share is refunded.
+  const split = store.easySplit !== false;
+  const vendorPercent = !split ? 0 : Math.round((100 - (Number.isFinite(fee) && fee >= 0 && fee < 100 ? fee : DEFAULT_FEE_PERCENT)) * 100) / 100;
   const orderId = newOrderId();
   const site = siteUrl(env);
   let created;
@@ -42,7 +45,7 @@ export async function handle(req, { env, fetchFn, orders }) {
       },
       order_note: product.title.slice(0, 200),
       order_tags: { store: store.slug, product: String(product.index) },
-      order_splits: [{ vendor_id: store.vendorId, percentage: vendorPercent }]
+      ...(split ? { order_splits: [{ vendor_id: store.vendorId, percentage: vendorPercent }] } : {})
     });
   } catch (e) {
     console.error('create-order: Cashfree refused the order', e instanceof CashfreeError ? e.status : '', e.message);
