@@ -17,6 +17,7 @@ $head = @'
 <meta property="og:title" content="Thela: stop chasing screenshots">
 <meta property="og:description" content="One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then â‚¹299 a month.">
 <meta property="og:url" content="https://thela.site/">
+<meta name="google-site-verification" content="WaWYGEqhW8NoAbMPXi8j6talax29xJJHeKr7QV2ZBiA">
 '@
 $split = $src.IndexOf('<svg width="0"')
 if ($split -lt 0) { throw "Could not find the icon sprite in thela.html; the build splits head/body there." }
