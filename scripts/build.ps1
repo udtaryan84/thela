@@ -1,4 +1,4 @@
-# Builds the deployable site.
+﻿# Builds the deployable site.
 #   thela.html            -> site/index.html   (adds doctype/head/body wrapper)
 #   pages/*.html          -> site/*.html       (complete pages, copied as they are)
 #   site/ (pages + images) -> thela-netlify.zip and site/thela.zip (download link)
@@ -11,16 +11,23 @@ $head = @'
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Stop chasing screenshots. One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then ₹299 a month.">
+<meta name="description" content="Stop chasing screenshots. One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then â‚¹299 a month.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Thela">
 <meta property="og:title" content="Thela: stop chasing screenshots">
-<meta property="og:description" content="One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then ₹299 a month.">
+<meta property="og:description" content="One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then â‚¹299 a month.">
 <meta property="og:url" content="https://thela.site/">
 '@
 $split = $src.IndexOf('<svg width="0"')
 if ($split -lt 0) { throw "Could not find the icon sprite in thela.html; the build splits head/body there." }
 $html = $head + $src.Substring(0, $split) + "</head>`n<body>`n" + $src.Substring($split) + "`n</body>`n</html>`n"
+
+# Microsoft Clarity (visitor analytics for the course tracking on shipped.money).
+# Added before </head> on every public page; owner.html is left out.
+$clarityId = 'zattyb8ew1'
+$clarity = "<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,'clarity','script','$clarityId');</script>`n"
+$addClarity = { param($t) $i = $t.IndexOf('</head>'); if ($i -lt 0) { $t } else { $t.Insert($i, $clarity) } }
+$html = & $addClarity $html
 
 # Creator stores: stores/<name>.json + stores/_template.html -> site/s/<name>/index.html
 # Files starting with "_" are not stores. "draft": true skips a store.
@@ -59,7 +66,7 @@ foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -not
     Replace('{{TITLE}}', (& $esc "$($s.name) on Thela")).Replace('{{DESC}}', (& $esc $s.bio)).
     Replace('{{ROBOTS}}', $(if ($s.demo -or $s.test) { '<meta name="robots" content="noindex">' } else { '' })).
     Replace('{{QRLIB}}', $qrlib).Replace('{{SITE}}', ($site | ConvertTo-Json -Compress)).Replace('{{DATA}}', $json)
-  $storePages[$s.slug] = $page
+  $storePages[$s.slug] = & $addClarity $page
   # Checkout stores also get store.json: the prices and vendor id the checkout functions trust.
   # Public settings only; delivery links never go here (they live in Netlify Blobs).
   if ($checkout) {
@@ -88,7 +95,9 @@ Write-Host "Stores built: $($built -join ', ')"
 
 $pages = @()
 Get-ChildItem "$root\pages\*.html" | ForEach-Object {
-  Copy-Item $_.FullName "$root\site\$($_.Name)" -Force
+  $text = Get-Content -Raw -Encoding UTF8 $_.FullName
+  if ($_.Name -ne 'owner.html') { $text = & $addClarity $text }
+  [IO.File]::WriteAllText("$root\site\$($_.Name)", $text, $utf8)
   $pages += "$root\site\$($_.Name)"
 }
 
