@@ -5,7 +5,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">
 <style>
 /* Thela v3. Airbnb-style system: white canvas, one brand colour (saffron), soft rounded cards,
-   people and reviews first. Motion by StringTune (split text, scroll progress, magnetic buttons).
+   people and reviews first. Motion: scroll-poster pattern on StringTune. Every section reads a
+   0 to 1 scroll value (StringProgress writes it as a CSS variable) and CSS turns it into movement,
+   so the page reacts for as long as you scroll. All scroll-linked rules sit under .js-motion:
+   without JS, or with reduced motion, the page shows its final, static layout.
    Tokens: light on :root, dark under both dark selectors. */
 :root {
   --bg: #FFFFFF; --surface: #F7F7F7; --card: #FFFFFF;
@@ -15,6 +18,7 @@
   --sans: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --mark: "Bricolage Grotesque", "Plus Jakarta Sans", sans-serif;
   --gutter: 24px; --ease: cubic-bezier(.2,0,0,1);
+  --fan: 1; /* travel scale for scroll effects; smaller on phones */
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -34,8 +38,8 @@
   color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 84px; }
-body { margin: 0; background: var(--bg); color: var(--body); font: 400 16px/1.55 var(--sans); overflow-x: hidden; }
+html { -webkit-text-size-adjust: 100%; scroll-padding-top: 84px; }
+body { margin: 0; background: var(--bg); color: var(--body); font: 400 16px/1.55 var(--sans); overflow-x: clip; }
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; text-underline-offset: .2em; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 8px; }
@@ -52,8 +56,7 @@ p { margin: 0; }
 .brand span { font: 800 26px/1 var(--mark); letter-spacing: -0.04em; }
 
 /* Buttons */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: 12px; border: 1px solid transparent; font: 600 16px var(--sans); text-decoration: none; cursor: pointer; transition: background .2s, transform .2s var(--ease), box-shadow .2s; white-space: nowrap; }
-.btn:active { transform: scale(.98); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: 12px; border: 1px solid transparent; font: 600 16px var(--sans); text-decoration: none; cursor: pointer; transition: background .2s, box-shadow .2s; white-space: nowrap; }
 .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 8px 20px color-mix(in srgb, var(--accent) 30%, transparent); }
 .btn-primary:hover { background: var(--accent-hover); }
 .btn-ghost { background: var(--card); color: var(--ink); border-color: var(--ink); }
@@ -74,19 +77,19 @@ p { margin: 0; }
 .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--ink); }
 .eyebrow b { background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 3px 10px; font-size: 12px; letter-spacing: .02em; }
-.hero h1 { font-size: clamp(2.6rem, 6.4vw, 4.6rem); line-height: 1.02; font-weight: 800; letter-spacing: -0.045em; margin: 22px 0 20px; }
+.hero h1 { font-size: clamp(2.6rem, 6.4vw, 4.6rem); line-height: 1.02; font-weight: 800; letter-spacing: -0.045em; margin: 22px 0 20px; transform-origin: left bottom; }
 .hero h1 .hl { color: var(--accent); }
 .lead { font-size: 1.2rem; line-height: 1.55; color: var(--body); max-width: 34ch; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 .hero-note { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 22px; font-size: 14px; color: var(--muted); }
 .hero-note span { display: inline-flex; align-items: center; gap: 6px; }
 .hero-note .ic { color: var(--ok); font-size: 16px; }
+.sample { margin-top: 14px; font-size: 13px; color: var(--muted); }
 
 /* Phone store mock */
 .stage { position: relative; display: grid; place-items: center; min-height: 600px; }
 .stage-glow { position: absolute; inset: 8% 6%; border-radius: 48px; background: radial-gradient(60% 55% at 50% 45%, var(--accent-soft), transparent 70%); }
-.phone { position: relative; width: 320px; max-width: 100%; border-radius: 44px; padding: 10px; background: #111; box-shadow: var(--shadow-lg);
-  transform: perspective(1200px) rotateX(calc(var(--hero, 0) * 14deg)) rotateY(calc(-8deg + var(--hero, 0) * 8deg)) translateY(calc(var(--hero, 0) * -30px)); }
+.phone { position: relative; width: 320px; max-width: 100%; border-radius: 44px; padding: 10px; background: #111; box-shadow: var(--shadow-lg); transform: perspective(1200px) rotateY(-8deg); }
 .screen { border-radius: 36px; overflow: hidden; background: #FFFFFF; color: #222222; font-size: 13px; }
 .s-top { height: 30px; display: grid; place-items: center; }
 .s-top i { width: 84px; height: 22px; border-radius: 999px; background: #111; }
@@ -95,7 +98,7 @@ p { margin: 0; }
 .s-av { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #F6C9A8, #C2410C); display: grid; place-items: center; color: #fff; font: 700 24px var(--sans); box-shadow: 0 0 0 4px #fff, 0 0 0 5px #DDDDDD; }
 .s-host b { font-size: 17px; color: #222; }
 .s-host small { color: #6A6A6A; font-size: 12px; }
-.s-stats { display: flex; justify-content: center; gap: 0; border: 1px solid #DDDDDD; border-radius: 12px; overflow: hidden; }
+.s-stats { display: flex; border: 1px solid #DDDDDD; border-radius: 12px; overflow: hidden; }
 .s-stats div { flex: 1; padding: 8px 4px; text-align: center; border-right: 1px solid #DDDDDD; }
 .s-stats div:last-child { border-right: 0; }
 .s-stats b { display: block; font-size: 14px; color: #222; }
@@ -106,12 +109,11 @@ p { margin: 0; }
 .s-item small { color: #6A6A6A; font-size: 11px; }
 .s-price { background: #C2410C; color: #fff; font-weight: 700; border-radius: 999px; padding: 6px 12px; font-size: 12px; }
 .s-safe { display: flex; gap: 6px; align-items: center; justify-content: center; color: #1E7B4F; font-size: 11px; font-weight: 600; }
-.float { position: absolute; display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-lg); font-size: 14px; color: var(--ink); font-weight: 600; }
+.float { position: absolute; display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-lg); font-size: 14px; color: var(--ink); font-weight: 600; z-index: 2; }
 .float small { display: block; font-weight: 500; color: var(--muted); font-size: 12px; }
 .float .dot { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 18px; }
 .float-a { left: -8px; top: 22%; }
 .float-b { right: -12px; bottom: 18%; }
-.float-a > div, .float-b > div { will-change: transform; }
 
 /* Marquee */
 .marquee { border-block: 1px solid var(--line); overflow: hidden; padding: 18px 0; margin-top: 40px; }
@@ -120,12 +122,20 @@ p { margin: 0; }
 .marquee span::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
 @keyframes slide { to { transform: translateX(-50%); } }
 
+/* Poster: giant type on full-bleed saffron */
+.poster { background: var(--accent); color: var(--accent-ink); overflow: hidden; padding: 96px 0 104px; }
+.poster-row { white-space: nowrap; font: 800 clamp(5rem, 17vw, 15rem)/.86 var(--mark); letter-spacing: -0.055em; color: var(--accent-ink); }
+.poster-row.ghost { color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, var(--accent-ink) 70%, transparent); }
+.poster-copy { display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: space-between; align-items: end; margin-top: 48px; }
+.poster-copy p { font-size: clamp(1.15rem, 2.2vw, 1.6rem); font-weight: 600; max-width: 30ch; line-height: 1.35; }
+.poster-copy small { font-size: 15px; opacity: .85; max-width: 34ch; }
+
 /* Sections */
 section { position: relative; }
 .sec { padding: 112px 0; }
 .sec-head { max-width: 760px; margin-bottom: 48px; }
 .kicker { display: inline-block; font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
-.sec h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.06; font-weight: 800; letter-spacing: -0.04em; }
+.sec h2, .how-stage h2, .strip-stage h2, .offer h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.06; font-weight: 800; letter-spacing: -0.04em; }
 .sec-head p { margin-top: 18px; font-size: 1.15rem; color: var(--body); max-width: 56ch; }
 
 /* Pain cards */
@@ -133,38 +143,47 @@ section { position: relative; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: var(--shadow); }
 .card .bigic { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-size: 26px; margin-bottom: 20px; }
 .card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
-.card p { color: var(--body); }
-.quote { margin-top: 18px; padding: 12px 14px; border-radius: 12px; background: var(--surface); font-size: 14px; color: var(--muted); font-style: italic; }
 
-/* Steps with scroll progress line */
+/* Steps (pinned while you scroll through them) */
+.how-pin { position: relative; }
+.how-stage { padding: 112px 0; }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; position: relative; padding-top: 34px; }
 .steps-line { position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: 4px; background: var(--line); overflow: hidden; }
-.steps-line i { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--steps, 0)); }
+.steps-line i { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(var(--steps, 1)); }
+.step { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 26px; }
 .step-n { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--bg); font-weight: 800; margin-bottom: 18px; }
 .step h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
 .step small { display: inline-block; margin-top: 12px; font-size: 13px; font-weight: 600; color: var(--muted); }
 
-/* Buyer journey */
+/* Client journey: a horizontal strip of phone screens */
+.strip-stage .sec-head { margin-bottom: 32px; }
 .journey { background: var(--surface); }
-.jgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-.jcard { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px; }
-.jcard .jic { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 20px; margin-bottom: 16px; }
-.jcard h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
-.jcard p { font-size: 15px; }
-.code { display: inline-block; margin-top: 10px; font-weight: 800; letter-spacing: .12em; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 8px; font-size: 14px; }
+.strip-pin { position: relative; }
+.strip-stage { padding: 112px 0; overflow: hidden; }
+.strip { display: flex; gap: 24px; padding-inline: max(var(--gutter), 40vw) var(--gutter); width: max-content; }
+.jphone { width: 320px; flex: none; border-radius: 34px; padding: 8px; background: #111; box-shadow: var(--shadow-lg); }
+.jscreen { border-radius: 28px; background: #FFFFFF; color: #222; min-height: 340px; padding: 20px 18px; display: grid; grid-template-rows: auto auto 1fr auto; gap: 12px; }
+.jstep { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #C2410C; }
+.jscreen h3 { color: #222; font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; }
+.jscreen p { color: #3F3F3F; font-size: 14.5px; }
+.jvis { display: grid; place-items: center; align-content: center; gap: 10px; }
+.jbig { width: 120px; height: 120px; border-radius: 32px; display: grid; place-items: center; background: #FDEEE6; color: #C2410C; font-size: 60px; }
+.jrow { width: 100%; display: flex; justify-content: space-between; align-items: center; border: 1px solid #DDD; border-radius: 12px; padding: 10px 12px; font-size: 13px; font-weight: 600; }
+.jrow .s-price { font-size: 12px; }
+.bubble { justify-self: end; max-width: 92%; background: #DCF8C6; color: #1B3A1B; border-radius: 14px 14px 4px 14px; padding: 10px 12px; font-size: 13px; }
+.code { display: inline-block; font-weight: 800; letter-spacing: .12em; color: #C2410C; background: #FDEEE6; padding: 4px 10px; border-radius: 8px; font-size: 14px; }
 
 /* Founding offer */
-.offer { padding: 0 0 112px; }
+.offer { padding: 112px 0; }
 .offer-box { border-radius: 32px; background: var(--ink); color: var(--bg); padding: 64px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; overflow: hidden; position: relative; }
 .offer-box h2 { color: var(--bg); }
-.offer-box .kicker { color: var(--accent); }
 .offer-box p.big { margin-top: 18px; font-size: 1.2rem; color: color-mix(in srgb, var(--bg) 80%, transparent); max-width: 40ch; }
 .offer-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; align-content: start; }
 .offer-list li { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: 16px; background: color-mix(in srgb, var(--bg) 8%, transparent); border: 1px solid color-mix(in srgb, var(--bg) 14%, transparent); font-weight: 500; }
 .offer-list .ic { color: var(--accent); font-size: 20px; margin-top: 2px; }
 .offer-list b { color: var(--bg); }
 .price-tag { display: flex; align-items: baseline; gap: 12px; margin-top: 28px; }
-.price-tag strong { font-size: 3.6rem; font-weight: 800; letter-spacing: -0.04em; color: var(--bg); line-height: 1; }
+.price-tag strong { display: inline-block; font-size: 4.4rem; font-weight: 800; letter-spacing: -0.04em; color: var(--accent); line-height: 1; transform-origin: left bottom; }
 .price-tag span { color: color-mix(in srgb, var(--bg) 70%, transparent); }
 .offer-box .btn-primary { margin-top: 28px; }
 
@@ -192,7 +211,6 @@ section { position: relative; }
 .field label { font-weight: 600; color: var(--ink); font-size: 14px; }
 .field input, .field select { width: 100%; min-height: 50px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--ink); font: 500 16px var(--sans); padding: 10px 14px; }
 .field input:focus, .field select:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
-.field small { color: var(--muted); font-size: 13px; }
 .consent { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--body); }
 .consent input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
 .hp { position: absolute; left: -9999px; }
@@ -213,40 +231,74 @@ section { position: relative; }
 .footer nav a:hover { color: var(--ink); text-decoration: underline; }
 .footer p { width: 100%; font-size: 14px; color: var(--muted); }
 
-/* Motion (StringTune). Without JS or with reduced motion, everything shows in its final state. */
+/* ===== Scroll-linked motion (only when StringTune is running) ===== */
+/* Entrances: headings split into words that rise; small blocks fade up. */
 .js-motion [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
 .js-motion [data-reveal].-inview { opacity: 1; transform: none; }
-.js-motion .split .-s-line { overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
-.js-motion .split .-s-word { display: inline-block; transform: translateY(105%); transition: transform .9s var(--ease); transition-delay: calc(var(--word-index, 0) * 45ms); }
+.js-motion .split .-s-word { display: inline-block; transform: translateY(105%); clip-path: inset(0 0 -10% 0); transition: transform .9s var(--ease); transition-delay: calc(var(--word-index, 0) * 45ms); }
 .js-motion .split.-inview .-s-word { transform: none; }
 .js-motion .hero h1.split .-s-word { animation: rise 1s var(--ease) both; animation-delay: calc(150ms + var(--word-index, 0) * 70ms); }
 @keyframes rise { from { transform: translateY(105%); } to { transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .marquee-track { animation: none; }
-  .phone { transform: none; }
-}
+
+/* 2. Hero: headline shrinks and lifts, phone turns towards you, cards drift at different speeds. */
+.js-motion .hero h1 { transform: translateY(calc(var(--hero, 0) * -40px)) scale(calc(1 - var(--hero, 0) * .18)); opacity: calc(1 - var(--hero, 0) * .6); }
+.js-motion .phone { transform: perspective(1200px) rotateY(calc(-14deg + var(--hero, 0) * 26deg)) rotateX(calc(var(--hero, 0) * 10deg)) translateY(calc(var(--hero, 0) * -60px)) scale(calc(1 + var(--hero, 0) * .06)); }
+.js-motion .float-a { transform: translate(calc(var(--hero, 0) * -40px * var(--fan)), calc(var(--hero, 0) * -170px)); }
+.js-motion .float-b { transform: translate(calc(var(--hero, 0) * 40px * var(--fan)), calc(var(--hero, 0) * 120px)); }
+.js-motion .stage-glow { transform: scale(calc(1 + var(--hero, 0) * .5)); opacity: calc(1 - var(--hero, 0) * .5); }
+
+/* 3. Poster: two giant rows slide in opposite directions. */
+.js-motion .poster-row.r1 { transform: translateX(calc(8% - var(--poster, 0) * 46%)); }
+.js-motion .poster-row.r2 { transform: translateX(calc(-46% + var(--poster, 0) * 46%)); }
+
+/* 4. Problem cards: start stacked and tilted in the middle, fan out into place. */
+.js-motion .cards3 .card { transform: translate(calc((1 - var(--fanp, 1)) * var(--x, 0) * var(--fan)), calc((1 - var(--fanp, 1)) * var(--y, 0))) rotate(calc((1 - var(--fanp, 1)) * var(--r, 0))); }
+.js-motion .cards3 .card:nth-child(1) { --x: 106%; --y: 30px; --r: -9deg; }
+.js-motion .cards3 .card:nth-child(2) { --x: 0%; --y: 60px; --r: 3deg; position: relative; z-index: 1; }
+.js-motion .cards3 .card:nth-child(3) { --x: -106%; --y: 30px; --r: 10deg; }
+
+/* 5. How it works: the section pins and the three steps play through one by one. */
+.js-motion .how-pin { height: 280vh; }
+.js-motion .how-stage { position: sticky; top: 72px; min-height: calc(100svh - 72px); display: grid; align-content: center; padding: 32px 0; }
+.js-motion .step { --s: clamp(0, calc(var(--steps, 0) * 3.6 - var(--i) * 1.1), 1); opacity: calc(.18 + var(--s) * .82); transform: translateY(calc((1 - var(--s)) * 70px)) scale(calc(.94 + var(--s) * .06)); border-color: color-mix(in srgb, var(--accent) calc(var(--s) * 60%), var(--line)); }
+
+/* 6. What clients see: vertical scroll moves the strip of phone screens sideways. */
+.js-motion .strip-pin { height: 300vh; }
+.js-motion .strip-stage { grid-template-columns: 100%; position: sticky; top: 72px; min-height: calc(100svh - 72px); display: grid; align-content: center; padding: 24px 0; }
+.js-motion .strip { transform: translateX(calc(var(--strip, 0) * var(--strip-dist, 0px) * -1)); }
+.js-motion .jphone { transform: rotate(calc((var(--strip, 0) - .5) * -6deg)); }
+
+/* 7. Founding offer: the dark box grows from a card to full width, the price lands. */
+.js-motion .offer-box { transform: scale(calc(.82 + var(--offer, 1) * .18)); border-radius: calc(64px - var(--offer, 1) * 32px); }
+.js-motion .price-tag strong { transform: scale(calc(.5 + var(--offer, 1) * .5)) rotate(calc((1 - var(--offer, 1)) * -12deg)); }
+
+/* Founder avatar turns a little as you pass. */
+.js-motion .f-av { transform: rotate(calc((var(--founder, .5) - .5) * 40deg)) scale(calc(.9 + var(--founder, .5) * .2)); }
+
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
 
 /* Responsive */
 @media (max-width: 980px) {
   .hero-grid, .apply-grid, .offer-box { grid-template-columns: 1fr; }
   .stage { min-height: 520px; }
   .cards3, .steps { grid-template-columns: 1fr; }
-  .jgrid { grid-template-columns: 1fr 1fr; }
-  .steps { padding-top: 0; padding-left: 28px; }
+  .steps { padding-top: 0; padding-left: 28px; gap: 14px; }
   .steps-line { top: 0; bottom: 0; left: 0; right: auto; width: 4px; height: auto; }
-  .steps-line i { width: 100%; height: 100%; transform-origin: top; transform: scaleY(var(--steps, 0)); }
+  .steps-line i { width: 100%; height: 100%; transform-origin: top; transform: scaleY(var(--steps, 1)); }
   .offer-box { padding: 40px 28px; }
+  .js-motion .cards3 .card:nth-child(1) { --x: 0%; --y: 160px; --r: -6deg; }
+  .js-motion .cards3 .card:nth-child(2) { --x: 0%; --y: 40px; --r: 4deg; }
+  .js-motion .cards3 .card:nth-child(3) { --x: 0%; --y: -100px; --r: -3deg; }
 }
 @media (max-width: 720px) {
-  :root { --gutter: 16px; }
+  :root { --gutter: 16px; --fan: .4; }
   .nav-links a:not(.btn) { display: none; }
   .hero { padding: 40px 0 24px; }
   .hero-cta .btn { width: 100%; }
   .lead { font-size: 1.1rem; }
-  .sec { padding: 72px 0; }
-  .offer { padding-bottom: 72px; }
-  .jgrid, .fields { grid-template-columns: 1fr; }
+  .sec, .offer { padding: 72px 0; }
+  .how-stage, .strip-stage { padding: 72px 0; }
+  .fields { grid-template-columns: 1fr; }
   .float-a { left: 0; top: 6%; }
   .float-b { right: 0; bottom: 4%; }
   .phone { width: 280px; }
@@ -254,9 +306,19 @@ section { position: relative; }
   .founder { grid-template-columns: 1fr; }
   .f-av { width: 88px; height: 88px; font-size: 32px; }
   .apply { padding: 22px; }
-  .card { padding: 22px; }
-  .price-tag strong { font-size: 3rem; }
-  .offer-box { border-radius: 24px; margin-inline: 0; }
+  .card, .step { padding: 20px; }
+  .step-n { width: 36px; height: 36px; margin-bottom: 10px; }
+  .step h3 { font-size: 1.1rem; }
+  .step p { font-size: 15px; }
+  .price-tag strong { font-size: 3.4rem; }
+  .offer-box { border-radius: 24px; }
+  .jphone { width: 250px; }
+  .jscreen { min-height: 380px; }
+  .poster { padding: 64px 0 72px; }
+  .js-motion .how-pin { height: auto; }
+  .js-motion .how-stage { position: static; min-height: 0; padding: 72px 0; }
+  .step small { display: none; }
+  .js-motion .strip-pin { height: 240vh; }
 }
 </style>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -267,18 +329,17 @@ section { position: relative; }
   <symbol id="i-img" viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,16V158.75l-26.07-26.06a16,16,0,0,0-22.63,0l-20,20-44-44a16,16,0,0,0-22.62,0L40,149.37V56ZM40,172l52-52,80,80H40Zm176,28H194.63l-36-36,20-20L216,181.38V200ZM144,100a12,12,0,1,1,12,12A12,12,0,0,1,144,100Z"/></symbol>
   <symbol id="i-renew" viewBox="0 0 256 256"><path d="M224,48V96a8,8,0,0,1-8,8H168a8,8,0,0,1,0-16h28.69L182.06,73.37a79.56,79.56,0,0,0-56.13-23.43h-.45A79.52,79.52,0,0,0,69.59,72.71,8,8,0,0,1,58.41,61.27a96,96,0,0,1,135,.79L208,76.69V48a8,8,0,0,1,16,0ZM186.41,183.29a80,80,0,0,1-112.47-.66L59.31,168H88a8,8,0,0,0,0-16H40a8,8,0,0,0-8,8v48a8,8,0,0,0,16,0V179.31l14.63,14.63A95.43,95.43,0,0,0,130,222.06h.53a95.36,95.36,0,0,0,67.07-27.33,8,8,0,0,0-11.18-11.44Z"/></symbol>
   <symbol id="i-users" viewBox="0 0 256 256"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"/></symbol>
-  <symbol id="i-tap" viewBox="0 0 256 256"><path d="M56,76a60,60,0,0,1,120,0,8,8,0,0,1-16,0,44,44,0,0,0-88,0,8,8,0,1,1-16,0Zm140,44a27.9,27.9,0,0,0-13.36,3.39A28,28,0,0,0,144,106.7V76a28,28,0,0,0-56,0v80l-3.82-6.13a28,28,0,0,0-48.41,28.17l29.32,50A8,8,0,1,0,78.89,220L49.6,170a12,12,0,1,1,20.78-12l.14.23,18.68,30A8,8,0,0,0,104,184V76a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V132a12,12,0,0,1,24,0v20a8,8,0,0,0,16,0v-4a12,12,0,0,1,24,0v36c0,21.61-7.1,36.3-7.16,36.42a8,8,0,0,0,3.58,10.73A7.9,7.9,0,0,0,208,232a8,8,0,0,0,7.16-4.42c.37-.73,8.85-18,8.85-43.58V148A28,28,0,0,0,196,120Z"/></symbol>
+  <symbol id="i-tap" viewBox="0 0 256 256"><path d="M56,76a60,60,0,0,1,120,0,8,8,0,0,1-16,0,44,44,0,0,0-88,0,8,8,0,1,1-16,0Zm140,44a27.9,27.9,0,0,0-13.36,3.39A28,28,0,0,0,144,106.7V76a28,28,0,0,0-56,0v80l-3.82-6.13a28,28,0,0,0-48.41,28.170l29.32,50A8,8,0,1,0,78.89,220L49.6,170a12,12,0,1,1,20.78-12l.14.23,18.68,30A8,8,0,0,0,104,184V76a12,12,0,0,1,24,0v68a8,8,0,0,0,16,0V132a12,12,0,0,1,24,0v20a8,8,0,0,0,16,0v-4a12,12,0,0,1,24,0v36c0,21.61-7.1,36.3-7.16,36.42a8,8,0,0,0,3.58,10.73A7.9,7.9,0,0,0,208,232a8,8,0,0,0,7.16-4.42c.37-.73,8.850-18,8.85-43.58V148A28,28,0,0,0,196,120Z"/></symbol>
   <symbol id="i-qr" viewBox="0 0 256 256"><path d="M104,40H56A16,16,0,0,0,40,56v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,104,40Zm0,64H56V56h48v48Zm0,32H56a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V152A16,16,0,0,0,104,136Zm0,64H56V152h48v48ZM200,40H152a16,16,0,0,0-16,16v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,64H152V56h48v48Zm-64,72V144a8,8,0,0,1,16,0v32a8,8,0,0,1-16,0Zm80-16a8,8,0,0,1-8,8H184v40a8,8,0,0,1-8,8H144a8,8,0,0,1,0-16h24V144a8,8,0,0,1,16,0v8h24A8,8,0,0,1,216,160Zm0,32v16a8,8,0,0,1-16,0V192a8,8,0,0,1,16,0Z"/></symbol>
-  <symbol id="i-wa" viewBox="0 0 256 256"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L101,118a8,8,0,0,0-.73,7.51,56.47,56.47,0,0,0,30.15,30.15A8,8,0,0,0,138,155l14.61-9.74,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 256 256"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L101,118a8,8,0,0,0-.73,7.51,56.47,56.47,0,0,0,30.15,30.15A8,8,0,0,0,138,155l14.61-9.740,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/></symbol>
   <symbol id="i-pkg" viewBox="0 0 256 256"><path d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.17a16,16,0,0,0-8.32,14v95.64a16,16,0,0,0,8.32,14l88,48.17a15.88,15.88,0,0,0,15.36,0l88-48.17a16,16,0,0,0,8.32-14V80.18A16,16,0,0,0,223.68,66.15ZM128,32l80.34,44-29.77,16.3-80.35-44ZM128,120,47.66,76l33.9-18.56,80.34,44ZM40,90l80,43.78v85.79L40,175.82Zm176,85.78h0l-80,43.79V133.82l32-17.51V152a8,8,0,0,0,16,0V107.55L216,90v85.77Z"/></symbol>
-  <symbol id="i-play" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm48.24-94.78-64-40A8,8,0,0,0,100,88v80a8,8,0,0,0,12.24,6.78l64-40a8,8,0,0,0,0-13.56ZM116,153.57V102.43L156.91,128Z"/></symbol>
   <symbol id="i-cal" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"/></symbol>
   <symbol id="i-chat" viewBox="0 0 256 256"><path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78.69.69,0,0,0,.13-.11L82.5,208H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48Zm0,144H82.5a16,16,0,0,0-10.3,3.75l-.12.11L40,224V64H216Z"/></symbol>
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="nav" string="progress" string-id="page" string-key="--page" string-enter-el="top" string-enter-vp="top" string-exit-el="bottom" string-exit-vp="bottom" id="top">
+<header class="nav" id="top" string="progress" string-id="page" string-key="--page" string-enter-el="top" string-enter-vp="top" string-exit-el="bottom" string-exit-vp="bottom">
   <div class="wrap nav-inner">
     <a class="brand" href="#top" aria-label="thela home"><svg aria-hidden="true"><use href="#logo"/></svg><span>thela</span></a>
     <nav class="nav-links" aria-label="Main">
@@ -333,12 +394,21 @@ section { position: relative; }
       <div class="float float-b"><div class="dot"><svg class="ic" aria-hidden="true"><use href="#i-qr"/></svg></div><div>Order code RM7K4<small>Matched, no screenshot</small></div></div>
     </div>
   </div>
-  <p class="wrap" style="margin-top:14px;font-size:13px;color:var(--muted)">Riya is a sample coach, shown to explain how a store looks.</p>
+  <p class="wrap sample">Riya is a sample coach, shown to explain how a store looks.</p>
 
   <div class="marquee" aria-label="What coaches sell on Thela">
     <div class="marquee-track" id="marquee">
       <span>Monthly coaching plans</span><span>1:1 calls</span><span>Yoga batches</span><span>Workout guides</span><span>Diet plans</span><span>Recorded classes</span><span>Challenges</span>
     </div>
+  </div>
+</section>
+
+<section class="poster" aria-label="One link" string="progress" string-id="poster" string-key="--poster">
+  <div class="poster-row r1" aria-hidden="true">One link. One link. One link.</div>
+  <div class="poster-row r2 ghost" aria-hidden="true">Your store. Your store. Your store.</div>
+  <div class="wrap poster-copy">
+    <p>Plans, calls, batches and guides. Everything you sell, behind the link in your bio.</p>
+    <small>Clients see your face, your prices and your rules. Not a DM thread.</small>
   </div>
 </section>
 
@@ -348,18 +418,18 @@ section { position: relative; }
       <span class="kicker" data-reveal string="progress">Why coaches switch</span>
       <h2 class="split" string="split" string-split="word[start]">Selling by DM shouldn't feel like a second job.</h2>
     </div>
-    <div class="cards3">
-      <article class="card" data-reveal string="progress" style="--d:0">
+    <div class="cards3" string="progress" string-id="fan" string-key="--fanp" string-enter-el="top" string-enter-vp="bottom" string-exit-el="top" string-exit-vp="center">
+      <article class="card">
         <div class="bigic"><svg class="ic" aria-hidden="true"><use href="#i-img"/></svg></div>
         <h3>Screenshots to check</h3>
         <p>Every payment means opening your bank app to match a screenshot. One fake one, and you've given a plan away for free.</p>
       </article>
-      <article class="card" data-reveal string="progress" style="--d:1">
+      <article class="card">
         <div class="bigic"><svg class="ic" aria-hidden="true"><use href="#i-renew"/></svg></div>
         <h3>Renewals to chase</h3>
         <p>Month two means reminding every client by hand. The ones you forget quietly stop paying.</p>
       </article>
-      <article class="card" data-reveal string="progress" style="--d:2">
+      <article class="card">
         <div class="bigic"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></div>
         <h3>New clients who don't know you yet</h3>
         <p>A stranger on Instagram wants proof you're real before they pay. A clean store with your plans and prices does that for you.</p>
@@ -368,84 +438,85 @@ section { position: relative; }
   </div>
 </section>
 
-<section class="sec" id="how" string="progress" string-id="steps" string-key="--steps" string-enter-el="top" string-enter-vp="center" string-exit-el="bottom" string-exit-vp="center" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker" data-reveal string="progress">How it works</span>
-      <h2 class="split" string="split" string-split="word[start]">Three steps. We do most of them.</h2>
-    </div>
-    <div class="steps">
-      <div class="steps-line" aria-hidden="true"><i></i></div>
-      <div class="step" data-reveal string="progress" style="--d:0">
-        <div class="step-n">1</div>
-        <h3>Tell us what you sell</h3>
-        <p>A short WhatsApp chat or call about your plans, calls and guides, and what you charge.</p>
-        <small>About 15 minutes</small>
+<section id="how" class="how-pin" string="progress" string-id="steps" string-key="--steps" string-enter-el="top" string-enter-vp="top" string-exit-el="bottom" string-exit-vp="bottom">
+  <div class="how-stage">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="kicker">How it works</span>
+        <h2>Three steps. We do most of them.</h2>
       </div>
-      <div class="step" data-reveal string="progress" style="--d:1">
-        <div class="step-n">2</div>
-        <h3>We build your store</h3>
-        <p>Your photo, your products, your prices and your refund rule. You approve every word before it goes live.</p>
-        <small>Usually within 3 working days</small>
-      </div>
-      <div class="step" data-reveal string="progress" style="--d:2">
-        <div class="step-n">3</div>
-        <h3>Share one link</h3>
-        <p>Put it in your bio, stories and DMs. Clients tap a price and pay. We stay on WhatsApp to help you sell.</p>
-        <small>thela.site/s/yourname</small>
+      <div class="steps">
+        <div class="steps-line" aria-hidden="true"><i></i></div>
+        <div class="step" style="--i:0">
+          <div class="step-n">1</div>
+          <h3>Tell us what you sell</h3>
+          <p>A short WhatsApp chat or call about your plans, calls and guides, and what you charge.</p>
+          <small>About 15 minutes</small>
+        </div>
+        <div class="step" style="--i:1">
+          <div class="step-n">2</div>
+          <h3>We build your store</h3>
+          <p>Your photo, your products, your prices and your refund rule. You approve every word before it goes live.</p>
+          <small>Usually within 3 working days</small>
+        </div>
+        <div class="step" style="--i:2">
+          <div class="step-n">3</div>
+          <h3>Share one link</h3>
+          <p>Put it in your bio, stories and DMs. Clients tap a price and pay. We stay on WhatsApp to help you sell.</p>
+          <small>thela.site/s/yourname</small>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="sec journey" id="clients">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker" data-reveal string="progress">What your clients see</span>
-      <h2 class="split" string="split" string-split="word[start]">Easy for them. Clear for you.</h2>
-      <p data-reveal string="progress">No app, no account, no sign up. Just your store and the UPI app they already use.</p>
-    </div>
-    <div class="jgrid">
-      <article class="jcard" data-reveal string="progress" style="--d:0">
-        <div class="jic"><svg class="ic" aria-hidden="true"><use href="#i-tap"/></svg></div>
-        <h3>Tap a price</h3>
+<section class="journey strip-pin" id="clients" string="progress" string-id="strip" string-key="--strip" string-enter-el="top" string-enter-vp="top" string-exit-el="bottom" string-exit-vp="bottom">
+  <div class="strip-stage">
+    <div class="wrap"><div class="sec-head">
+      <span class="kicker">What your clients see</span>
+      <h2>Easy for them. Clear for you.</h2>
+      <p>No app, no account, no sign up. Just your store and the UPI app they already use.</p>
+    </div></div>
+    <div class="strip" id="strip">
+      <div class="jphone"><div class="jscreen">
+        <span class="jstep">Step 1</span><h3>Tap a price</h3>
+        <div class="jvis"><div class="jrow">Morning yoga, monthly <span class="s-price">₹1,499</span></div><div class="jrow">1:1 posture call <span class="s-price">₹999</span></div></div>
         <p>They pick a plan, call or guide and add their name and email.</p>
-      </article>
-      <article class="jcard" data-reveal string="progress" style="--d:1">
-        <div class="jic"><svg class="ic" aria-hidden="true"><use href="#i-qr"/></svg></div>
-        <h3>Pay by UPI</h3>
+      </div></div>
+      <div class="jphone"><div class="jscreen">
+        <span class="jstep">Step 2</span><h3>Pay by UPI</h3>
+        <div class="jvis"><div class="jbig"><svg class="ic" aria-hidden="true"><use href="#i-qr"/></svg></div><span class="code">RM7K4</span></div>
         <p>A QR with the exact amount and an order code, straight to your UPI.</p>
-        <span class="code">RM7K4</span>
-      </article>
-      <article class="jcard" data-reveal string="progress" style="--d:2">
-        <div class="jic"><svg class="ic" aria-hidden="true"><use href="#i-wa"/></svg></div>
-        <h3>Message you the code</h3>
+      </div></div>
+      <div class="jphone"><div class="jscreen">
+        <span class="jstep">Step 3</span><h3>Message you the code</h3>
+        <div class="jvis"><div class="bubble">Hi Riya, I paid ₹1,499 for Morning yoga. Order code RM7K4.</div></div>
         <p>One tap sends you their name, item and code on WhatsApp.</p>
-      </article>
-      <article class="jcard" data-reveal string="progress" style="--d:3">
-        <div class="jic"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div>
-        <h3>Get what they paid for</h3>
+      </div></div>
+      <div class="jphone"><div class="jscreen">
+        <span class="jstep">Step 4</span><h3>Get what they paid for</h3>
+        <div class="jvis"><div class="jbig"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div></div>
         <p>You match the code in your bank app and send it. No screenshot guesswork.</p>
-      </article>
+      </div></div>
     </div>
   </div>
 </section>
 
-<section class="sec offer" id="offer">
+<section class="offer" id="offer">
   <div class="wrap">
-    <div class="offer-box">
+    <div class="offer-box" string="progress" string-id="offer" string-key="--offer" string-enter-el="top" string-enter-vp="bottom" string-exit-el="top" string-exit-vp="center">
       <div>
-        <span class="kicker" data-reveal string="progress">Founding coaches</span>
-        <h2 class="split" string="split" string-split="word[start]">Free while we build it together.</h2>
-        <p class="big" data-reveal string="progress">We're starting with 10 coaches and doing the work by hand, so we learn what really helps you sell. You pay nothing in this phase.</p>
-        <div class="price-tag" data-reveal string="progress"><strong>₹0</strong><span>for founding coaches, no card needed</span></div>
+        <span class="kicker">Founding coaches</span>
+        <h2>Free while we build it together.</h2>
+        <p class="big">We're starting with 10 coaches and doing the work by hand, so we learn what really helps you sell. You pay nothing in this phase.</p>
+        <div class="price-tag"><strong>₹0</strong><span>for founding coaches, no card needed</span></div>
         <a class="btn btn-primary" href="#apply" string="magnetic">Claim a founding spot <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
       <ul class="offer-list">
-        <li data-reveal string="progress" style="--d:0"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Your store, built by hand.</b> Photos, plans, prices and wording, done with you.</span></li>
-        <li data-reveal string="progress" style="--d:1"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Help on WhatsApp.</b> From Aryan, who builds Thela, not a call centre.</span></li>
-        <li data-reveal string="progress" style="--d:2"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Nothing taken from your sales.</b> Clients pay your UPI directly.</span></li>
-        <li data-reveal string="progress" style="--d:3"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg><span><b>What we ask in return:</b> honest feedback, and a short review if Thela helped you.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Your store, built by hand.</b> Photos, plans, prices and wording, done with you.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Help on WhatsApp.</b> From Aryan, who builds Thela, not a call centre.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Nothing taken from your sales.</b> Clients pay your UPI directly.</span></li>
+        <li><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg><span><b>What we ask in return:</b> honest feedback, and a short review if Thela helped you.</span></li>
       </ul>
     </div>
   </div>
@@ -453,9 +524,9 @@ section { position: relative; }
 
 <section class="sec" style="padding-top:0">
   <div class="wrap">
-    <div class="founder" data-reveal string="progress">
+    <div class="founder" string="progress" string-id="founder" string-key="--founder">
       <div class="f-av" aria-hidden="true">AS</div>
-      <div>
+      <div data-reveal string="progress">
         <h2>Built in Delhi by Aryan Salooja.</h2>
         <p>Thela is new and run by one person. That's why the first coaches get it free and get me on WhatsApp. Every store is set up by hand, and every piece of feedback shapes what we build next.</p>
       </div>
@@ -545,6 +616,10 @@ section { position: relative; }
     var c = s.cloneNode(true); c.setAttribute('aria-hidden', 'true'); track.appendChild(c);
   });
 
+  // Strip: how far the phone screens travel sideways (strip width minus the screen width).
+  var strip = document.getElementById('strip');
+  function stripDist() { strip.style.setProperty('--strip-dist', Math.max(0, strip.scrollWidth - document.documentElement.clientWidth) + 'px'); }
+
   // Motion: StringTune, loaded after the page. Skipped for people who ask for reduced motion.
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduce) {
@@ -554,10 +629,15 @@ section { position: relative; }
       try {
         var ST = window.StringTune, Tune = ST.default || ST.StringTune;
         var tune = Tune.getInstance();
+        // Tight smoothing: the page follows the wheel closely instead of dragging behind it.
+        tune.speed = 0.16;
+        tune.speedAccelerate = 0.8;
         tune.use(ST.StringProgress);
         tune.use(ST.StringSplit);
         tune.use(ST.StringMagnetic);
         document.documentElement.classList.add('js-motion');
+        stripDist();
+        window.addEventListener('resize', stripDist);
         tune.start(60);
       } catch (e) { document.documentElement.classList.remove('js-motion'); }
     };
