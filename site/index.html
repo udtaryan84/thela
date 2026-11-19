@@ -371,8 +371,12 @@ html.tone-ink body { background-color: var(--ink); }
 .js-motion .strip { transform: translateX(calc(var(--strip, 0) * var(--strip-dist, 0px) * -1)); }
 .js-motion .jphone { transform: rotate(calc((var(--strip, 0) - .5) * -6deg)); }
 
-/* 7. Founding offer: opens through a growing circle like a camera iris, the price lands. */
-.js-motion .offer-box { clip-path: circle(calc(8% + var(--offer, 1) * 80%) at 50% 50%); }
+.js-motion .offer-box { --offer: clamp(0, calc(var(--offer-raw, 1) * 2.6 - .15), 1); }
+.js-motion .manifesto { --man: clamp(0, calc(var(--man-raw, 1) * 1.9 - .15), 1); }
+/* 7. Founding offer: the box unrolls upwards like a shutter, the list deals in card by card, the price lands. */
+.js-motion .offer-box { clip-path: inset(calc((1 - var(--offer, 1)) * 55%) calc((1 - var(--offer, 1)) * 6%) 0 calc((1 - var(--offer, 1)) * 6%) round 32px); transform: translateY(calc((1 - var(--offer, 1)) * 60px)); }
+.js-motion .offer-box h2 { transform: translateY(calc((1 - var(--offer, 1)) * 50px)); opacity: calc(var(--offer, 1) * 1.4 - .4); }
+.js-motion .offer-list li { --c: clamp(0, calc(var(--offer, 1) * 5 - var(--i) * .7 - 1.6), 1); opacity: var(--c); transform: translateX(calc((1 - var(--c)) * 70px)) rotate(calc((1 - var(--c)) * 4deg)); }
 .js-motion .price-tag strong { transform: scale(calc(.5 + var(--offer, 1) * .5)) rotate(calc((1 - var(--offer, 1)) * -12deg)); }
 
 /* Founder avatar turns a little as you pass. */
@@ -597,7 +601,7 @@ html.tone-ink body { background-color: var(--ink); }
   </div>
 </section>
 
-<section class="manifesto glow" data-tone="ink" string="progress" string-id="man" string-key="--man" string-enter-el="top" string-enter-vp="bottom" string-exit-el="bottom" string-exit-vp="center">
+<section class="manifesto glow" data-tone="ink" string="progress" string-id="man" string-key="--man-raw">
   <div class="wrap">
     <p class="man-text split" string="split" string-split="word[start]">Your clients should pay <span class="key">you,</span> not your DMs.</p>
     <small class="man-sub">Thela turns the chat into a checkout.</small>
@@ -670,7 +674,7 @@ html.tone-ink body { background-color: var(--ink); }
 
 <section class="offer" id="offer">
   <div class="wrap">
-    <div class="offer-box glow" string="progress" string-id="offer" string-key="--offer" string-enter-el="top" string-enter-vp="bottom" string-exit-el="top" string-exit-vp="center">
+    <div class="offer-box glow" string="progress" string-id="offer" string-key="--offer-raw">
       <div>
         <span class="kicker">Founding coaches</span>
         <h2>Free while we build it together.</h2>
@@ -679,10 +683,10 @@ html.tone-ink body { background-color: var(--ink); }
         <a class="btn btn-primary" href="#apply" string="magnetic">Claim a founding spot <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </div>
       <ul class="offer-list">
-        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Your store, built by hand.</b> Photos, plans, prices and wording, done with you.</span></li>
-        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Help on WhatsApp.</b> From Aryan, who builds Thela, not a call centre.</span></li>
-        <li><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Nothing taken from your sales.</b> Clients pay your UPI directly.</span></li>
-        <li><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg><span><b>What we ask in return:</b> honest feedback, and a short review if Thela helped you.</span></li>
+        <li style="--i:0"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Your store, built by hand.</b> Photos, plans, prices and wording, done with you.</span></li>
+        <li style="--i:1"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Help on WhatsApp.</b> From Aryan, who builds Thela, not a call centre.</span></li>
+        <li style="--i:2"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg><span><b>Nothing taken from your sales.</b> Clients pay your UPI directly.</span></li>
+        <li style="--i:3"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg><span><b>What we ask in return:</b> honest feedback, and a short review if Thela helped you.</span></li>
       </ul>
     </div>
   </div>
