@@ -4,8 +4,8 @@
   "lang": "en",
   "name": "Riya Menon",
   "prefix": "RM",
-  "bio": "Eggless baking for home kitchens. Sample store, made up for the demo.",
-  "city": "Kochi",
+  "bio": "Gentle yoga for desk workers and back pain. Sample store, made up for the demo.",
+  "city": "Bengaluru",
   "links": [
     {
       "label": "Instagram",
@@ -21,28 +21,28 @@
   "whatsapp": "",
   "email": "",
   "delivery": "within 12 hours",
-  "refund": "If the file doesn't open, message me within 7 days and I'll fix it or refund you. Calls can be moved once with 24 hours' notice.",
+  "refund": "If a file doesn't open, message me within 7 days and I'll fix it or refund you. Calls can be moved once with 24 hours' notice.",
   "products": [
     {
-      "title": "Eggless Baking Starter Guide",
-      "meta": "PDF, 42 pages",
-      "price": 299
+      "title": "Morning yoga, monthly",
+      "meta": "20 live classes a month",
+      "price": 1499,
+      "monthly": true
     },
     {
-      "title": "Weekend Sourdough Course",
-      "meta": "8 video lessons",
-      "price": 1499
-    },
-    {
-      "title": "1:1 Kitchen Call",
-      "meta": "30 min, video",
+      "title": "1:1 posture call",
+      "meta": "45 minutes on Zoom",
       "price": 999
     },
     {
-      "title": "Monthly baking club",
-      "meta": "4 live classes a month",
-      "price": 499,
-      "monthly": true
+      "title": "Back pain guide",
+      "meta": "PDF, yours to keep",
+      "price": 299
+    },
+    {
+      "title": "7-day mobility challenge",
+      "meta": "7 recorded classes",
+      "price": 499
     }
   ]
 }
