@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Cpath fill=%27%23C2410C%27 d=%27M26 6h12v32q0 6 6 6h9v10H42Q26 54 26 38z%27/%3E%3Crect fill=%27%23C2410C%27 x=%276%27 y=%2719%27 width=%2742%27 height=%2710%27 rx=%275%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300..800&family=Bricolage+Grotesque:opsz,wght@12..96,800&display=swap" rel="stylesheet">
 <style>
 /* Thela v3. Airbnb-style system: white canvas, one brand colour (saffron), soft rounded cards,
    people and reviews first. Motion: scroll-poster pattern on StringTune. Every section reads a
@@ -135,8 +135,8 @@ p { margin: 0; }
 
 /* Poster: giant type on full-bleed saffron */
 .poster { background: var(--accent); color: var(--accent-ink); overflow: hidden; padding: 96px 0 104px; }
-.poster-row { white-space: nowrap; font: 800 clamp(5rem, 17vw, 15rem)/.86 var(--mark); letter-spacing: -0.055em; color: var(--accent-ink); }
-.poster-row.ghost { color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, var(--accent-ink) 70%, transparent); }
+.poster-row { white-space: nowrap; font: 800 clamp(5rem, 17vw, 15rem)/.95 var(--mark); letter-spacing: -0.025em; color: var(--accent-ink); padding-block: .02em; }
+.poster-row.ghost { color: color-mix(in srgb, var(--accent-ink) 26%, transparent); }
 .poster-copy { display: flex; flex-wrap: wrap; gap: 16px 48px; justify-content: space-between; align-items: end; margin-top: 48px; }
 .poster-copy p { font-size: clamp(1.15rem, 2.2vw, 1.6rem); font-weight: 600; max-width: 30ch; line-height: 1.35; }
 .poster-copy small { font-size: 15px; opacity: .85; max-width: 34ch; }
@@ -242,6 +242,73 @@ section { position: relative; }
 .footer nav a:hover { color: var(--ink); text-decoration: underline; }
 .footer p { width: 100%; font-size: 14px; color: var(--muted); }
 
+/* Why coaches switch: a DM thread that folds into a store */
+.why { padding: 112px 0 40px; }
+.why-head { margin-bottom: 8px; }
+.why-stage { padding: 40px 0; }
+.why-grid { display: grid; grid-template-columns: 340px 1fr; gap: 64px; align-items: center; }
+.why-phone { width: 320px; border-radius: 42px; padding: 10px; background: #111; box-shadow: var(--shadow-lg); }
+.why-screen { position: relative; height: 520px; border-radius: 34px; overflow: hidden; background: #FFFFFF; color: #222; }
+.dm { position: absolute; inset: 0; padding: 18px 14px; display: flex; flex-direction: column; gap: 10px; background: #FAFAFA; }
+.dm-top { display: flex; justify-content: space-between; align-items: center; padding: 4px 4px 10px; border-bottom: 1px solid #E6E6E6; font-size: 15px; }
+.dm-count { background: #E0245E; color: #fff; font-size: 11px; font-weight: 700; border-radius: 999px; padding: 3px 9px; }
+.msg { align-self: flex-start; max-width: 86%; background: #FFFFFF; border: 1px solid #E6E6E6; border-radius: 18px 18px 18px 6px; padding: 8px 12px; font-size: 13.5px; line-height: 1.35; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
+.msg b { display: block; font-size: 11px; color: #6A6A6A; font-weight: 600; margin-bottom: 2px; }
+.msg:nth-child(odd) { align-self: flex-end; border-radius: 18px 18px 6px 18px; }
+.fake-shot { display: grid; place-items: center; width: 150px; height: 64px; border-radius: 10px; background: repeating-linear-gradient(135deg, #EDEDED 0 8px, #E2E2E2 8px 16px); color: #6A6A6A; font-size: 11px; font-weight: 600; filter: blur(.4px); }
+.store-layer { position: absolute; inset: 0; padding: 22px 16px; background: #FFFFFF; display: flex; flex-direction: column; gap: 10px; }
+.sl-head { display: flex; gap: 12px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid #E6E6E6; }
+.sl-head b { display: block; font-size: 16px; }
+.sl-head small { color: #6A6A6A; font-size: 12px; }
+.sl-av { width: 44px; height: 44px; font-size: 15px; box-shadow: none; }
+.sl-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #E6E6E6; border-radius: 14px; font-size: 13.5px; font-weight: 600; }
+.sl-row small { display: block; font-weight: 500; color: #6A6A6A; font-size: 11.5px; }
+.sl-row em { font-style: normal; font-weight: 800; letter-spacing: .1em; color: #C2410C; background: #FDEEE6; border-radius: 8px; padding: 4px 8px; font-size: 12px; }
+.sl-note { margin-top: auto; text-align: center; font-size: 12.5px; color: #1E7B4F; font-weight: 600; }
+.why-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.why-list li { display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: start; padding: 20px 22px; border-radius: 20px; border: 1px solid var(--line); background: var(--card); }
+.wl-n { font: 800 1.1rem/1.6 var(--mark); color: var(--muted); }
+.why-list h3 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.02em; }
+.why-list p { margin-top: 4px; }
+.why-list .wl-win { background: var(--accent); border-color: var(--accent); }
+.why-list .wl-win h3, .why-list .wl-win p, .why-list .wl-win .wl-n { color: var(--accent-ink); }
+.why .sample { margin-top: 8px; }
+
+/* Coach types: poster tiles */
+.types-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.tile { border-radius: 24px; padding: 28px; min-height: 260px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid transparent; }
+.tile h3 { font: 800 clamp(2.6rem, 5vw, 4rem)/.95 var(--mark); letter-spacing: -0.03em; color: inherit; }
+.tile ul { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 8px; font-size: 15px; }
+.tile li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
+.t-accent { background: var(--accent); color: var(--accent-ink); }
+.t-ink { background: var(--ink); color: var(--bg); }
+.t-soft { background: var(--accent-soft); color: var(--ink); }
+.t-line { background: var(--card); color: var(--ink); border-color: var(--line); }
+
+/* Manifesto band */
+.manifesto { background: var(--ink); color: var(--bg); padding: 140px 0; position: relative; overflow: hidden; }
+.man-text { font: 800 clamp(2.6rem, 7.4vw, 6.6rem)/1.02 var(--sans); letter-spacing: -0.04em; color: var(--bg); max-width: 14ch; }
+.man-text .key { color: var(--accent); }
+.man-sub { display: block; margin-top: 28px; font-size: 1.2rem; color: color-mix(in srgb, var(--bg) 70%, transparent); }
+
+/* Sign-off wordmark */
+.sign { overflow: hidden; padding: 40px 0 0; }
+.sign-mark { display: flex; align-items: flex-end; justify-content: center; gap: 1.5vw; color: var(--accent); }
+.sign-mark svg { width: 17vw; height: 17vw; max-width: 220px; max-height: 220px; }
+.sign-mark span { font: 800 clamp(5rem, 24vw, 21rem)/.8 var(--mark); letter-spacing: -0.04em; color: var(--ink); }
+
+/* Colour flow: the page background follows the section in the middle of the screen */
+body { transition: background-color .7s var(--ease); }
+.js-motion .poster[data-tone], .js-motion .manifesto[data-tone] { background: transparent; }
+html.tone-accent body { background-color: var(--accent); }
+html.tone-ink body { background-color: var(--ink); }
+.js-motion.tone-accent .nav, .js-motion.tone-ink .nav { background: color-mix(in srgb, var(--bg) 92%, transparent); }
+
+/* Cursor glow on dark blocks (desktop) */
+.glow { position: relative; }
+.glow::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: var(--glow, 0); transition: opacity .4s; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 28%, transparent), transparent 65%); }
+.glow > * { position: relative; }
+
 /* ===== Scroll-linked motion (only when StringTune is running) ===== */
 /* Entrances: headings split into words that rise; small blocks fade up. */
 .js-motion [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: calc(var(--d, 0) * 90ms); }
@@ -262,11 +329,36 @@ section { position: relative; }
 .js-motion .poster-row.r1 { transform: translateX(calc(8% - var(--poster, 0) * 46%)); }
 .js-motion .poster-row.r2 { transform: translateX(calc(-46% + var(--poster, 0) * 46%)); }
 
-/* 4. Problem cards: start stacked and tilted in the middle, fan out into place. */
-.js-motion .cards3 .card { transform: translate(calc((1 - var(--fanp, 1)) * var(--x, 0) * var(--fan)), calc((1 - var(--fanp, 1)) * var(--y, 0))) rotate(calc((1 - var(--fanp, 1)) * var(--r, 0))); }
-.js-motion .cards3 .card:nth-child(1) { --x: 106%; --y: 30px; --r: -9deg; }
-.js-motion .cards3 .card:nth-child(2) { --x: 0%; --y: 60px; --r: 3deg; position: relative; z-index: 1; }
-.js-motion .cards3 .card:nth-child(3) { --x: -106%; --y: 30px; --r: 10deg; }
+/* 4. Why coaches switch: pinned. Messages pile up, then the chat folds into a store with coded orders. */
+.js-motion .why-pin { height: 340vh; }
+.js-motion .why-stage { position: sticky; top: 72px; min-height: calc(100svh - 72px); display: grid; align-content: center; grid-template-columns: 100%; }
+.js-motion .msg { --a: clamp(0, calc(var(--why, 0) * 16 - var(--i) * 1.2), 1); opacity: var(--a); transform: translateY(calc((1 - var(--a)) * 24px)) scale(calc(.9 + var(--a) * .1)); }
+.js-motion .dm { --fold: clamp(0, calc((var(--why, 0) - .55) * 5), 1); transform: scale(calc(1 - var(--fold) * .35)) translateY(calc(var(--fold) * -60px)) rotate(calc(var(--fold) * -6deg)); opacity: calc(1 - var(--fold)); filter: blur(calc(var(--fold) * 6px)); transform-origin: 50% 0; }
+.js-motion .dm-count { display: inline-block; transform: scale(calc(1 + var(--why, 0) * .6)); }
+.js-motion .store-layer { --st: clamp(0, calc((var(--why, 0) - .62) * 5), 1); opacity: var(--st); transform: translateY(calc((1 - var(--st)) * 80px)); }
+.js-motion .sl-row { --o: clamp(0, calc((var(--why, 0) - .7) * 14 - var(--i)), 1); opacity: var(--o); transform: translateX(calc((1 - var(--o)) * 40px)); }
+.js-motion .why-phone { transform: rotate(calc((var(--why, 0) - .5) * -6deg)) translateY(calc((.5 - var(--why, 0)) * 30px)); }
+.js-motion .why-list li { --l: clamp(0, calc(var(--why, 0) * 4.6 - var(--i) * 1.15), 1); opacity: calc(.22 + var(--l) * .78); transform: translateX(calc((1 - var(--l)) * 40px)); }
+.js-motion .why-list .wl-win { transform: translateX(calc((1 - var(--l)) * 40px)) scale(calc(.94 + var(--l) * .06)); }
+
+/* Coach types: columns drift at different speeds, tiles straighten as they settle. */
+.js-motion .tile { transform: translateY(calc((.5 - var(--types, .5)) * var(--dy, 0px))) rotate(calc((.5 - var(--types, .5)) * var(--rot, 0deg))); }
+.js-motion .tile:nth-child(3n+1) { --dy: 160px; --rot: -4deg; }
+.js-motion .tile:nth-child(3n+2) { --dy: -60px; --rot: 2deg; }
+.js-motion .tile:nth-child(3n) { --dy: 220px; --rot: 5deg; }
+
+/* Manifesto: words fill from grey to full colour as you read down, the key word swells. */
+.js-motion .man-text .-s-word { color: color-mix(in srgb, var(--bg) calc(clamp(0, var(--man, 1) * 12 - var(--word-index, 0) * 1.2, 1) * 100%), color-mix(in srgb, var(--bg) 22%, transparent)); }
+.js-motion .man-text .key .-s-word { color: var(--accent); font-weight: calc(300 + clamp(0, var(--man, 1) * 2 - .6, 1) * 500); }
+.js-motion .man-sub { opacity: clamp(0, calc(var(--man, 1) * 2 - 1), 1); }
+
+/* Sign-off: the wordmark rises and the handle of the t slides into place. */
+.js-motion .sign-mark span { display: inline-block; transform: translateY(calc((1 - var(--sign, 1)) * 60%)); }
+.js-motion .sign-mark svg { transform: translateY(calc((1 - var(--sign, 1)) * 40%)) rotate(calc((1 - var(--sign, 1)) * -20deg)); }
+.js-motion .sign-mark .handle { transform: translateX(calc((1 - var(--sign, 1)) * -30px)); }
+
+/* Speed-aware marquee runs from JS when motion is on. */
+.js-motion .marquee-track { animation: none; }
 
 /* 5. How it works: the section pins and the three steps play through one by one. */
 .js-motion .how-pin { height: 280vh; }
@@ -279,8 +371,8 @@ section { position: relative; }
 .js-motion .strip { transform: translateX(calc(var(--strip, 0) * var(--strip-dist, 0px) * -1)); }
 .js-motion .jphone { transform: rotate(calc((var(--strip, 0) - .5) * -6deg)); }
 
-/* 7. Founding offer: the dark box grows from a card to full width, the price lands. */
-.js-motion .offer-box { transform: scale(calc(.82 + var(--offer, 1) * .18)); border-radius: calc(64px - var(--offer, 1) * 32px); }
+/* 7. Founding offer: opens through a growing circle like a camera iris, the price lands. */
+.js-motion .offer-box { clip-path: circle(calc(8% + var(--offer, 1) * 80%) at 50% 50%); }
 .js-motion .price-tag strong { transform: scale(calc(.5 + var(--offer, 1) * .5)) rotate(calc((1 - var(--offer, 1)) * -12deg)); }
 
 /* Founder avatar turns a little as you pass. */
@@ -297,6 +389,8 @@ section { position: relative; }
   .steps-line { top: 0; bottom: 0; left: 0; right: auto; width: 4px; height: auto; }
   .steps-line i { width: 100%; height: 100%; transform-origin: top; transform: scaleY(var(--steps, 1)); }
   .offer-box { padding: 40px 28px; }
+  .why-grid { grid-template-columns: 1fr; gap: 28px; justify-items: center; }
+  .types-grid { grid-template-columns: 1fr 1fr; }
   .js-motion .cards3 .card:nth-child(1) { --x: 0%; --y: 160px; --r: -6deg; }
   .js-motion .cards3 .card:nth-child(2) { --x: 0%; --y: 40px; --r: 4deg; }
   .js-motion .cards3 .card:nth-child(3) { --x: 0%; --y: -100px; --r: -3deg; }
@@ -324,6 +418,23 @@ section { position: relative; }
   .price-tag strong { font-size: 3.4rem; }
   .offer-box { border-radius: 24px; }
   .jphone { width: 250px; }
+  .why { padding-top: 72px; }
+  .why-stage { padding: 16px 0; }
+  .why-phone { width: 250px; border-radius: 34px; padding: 8px; }
+  .why-screen { height: 340px; border-radius: 28px; }
+  .msg { font-size: 12px; padding: 6px 10px; }
+  .dm { gap: 6px; padding: 12px 10px; }
+  .why-list { gap: 6px; width: 100%; }
+  .why-list li { grid-template-columns: 40px 1fr; padding: 10px 14px; border-radius: 14px; }
+  .why-list p { display: none; }
+  .why-list h3 { font-size: 1rem; }
+  .wl-n { font-size: .85rem; }
+  .types-grid { grid-template-columns: 1fr; }
+  .tile { min-height: 0; padding: 22px; }
+  .js-motion .tile { --dy: 0px !important; --rot: 3deg !important; }
+  .js-motion .tile:nth-child(even) { --rot: -3deg !important; }
+  .manifesto { padding: 96px 0; }
+  .js-motion .why-pin { height: 300vh; }
   .jscreen { min-height: 380px; }
   .poster { padding: 64px 0 72px; }
   .js-motion .how-pin { height: auto; }
@@ -417,7 +528,7 @@ section { position: relative; }
   </div>
 </section>
 
-<section class="poster" aria-label="One link" string="progress" string-id="poster" string-key="--poster">
+<section class="poster" data-tone="accent" aria-label="One link" string="progress" string-id="poster" string-key="--poster">
   <div class="poster-row r1" aria-hidden="true">One link. One link. One link.</div>
   <div class="poster-row r2 ghost" aria-hidden="true">Your store. Your store. Your store.</div>
   <div class="wrap poster-copy">
@@ -426,29 +537,70 @@ section { position: relative; }
   </div>
 </section>
 
-<section class="sec" id="why">
+<section class="why" id="why">
+  <div class="wrap sec-head why-head">
+    <span class="kicker" data-reveal string="progress">Why coaches switch</span>
+    <h2 class="split" string="split" string-split="word[start]">A coach's evening, before and after Thela.</h2>
+    <p data-reveal string="progress">Riya teaches yoga to 40 clients. Here's what selling by DM looks like at 9 pm. Keep scrolling.</p>
+  </div>
+  <div class="why-pin" string="progress" string-id="why" string-key="--why" string-enter-el="top" string-enter-vp="top" string-exit-el="bottom" string-exit-vp="bottom">
+    <div class="why-stage">
+      <div class="wrap why-grid">
+        <div class="why-phone" aria-hidden="true">
+          <div class="why-screen">
+            <div class="dm">
+              <div class="dm-top"><b>Messages</b><span class="dm-count">14 new</span></div>
+              <div class="msg" style="--i:0"><b>ananya.fit</b>Hi ma'am, price for monthly yoga?</div>
+              <div class="msg" style="--i:1"><b>kabir_runs</b>Is the evening batch still open?</div>
+              <div class="msg shot" style="--i:2"><b>meera.k</b><span class="fake-shot">Payment screenshot</span></div>
+              <div class="msg" style="--i:3"><b>rohan.lifts</b>Ma'am payment kar diya, check karo</div>
+              <div class="msg" style="--i:4"><b>ananya.fit</b>Plan kab milega?</div>
+              <div class="msg" style="--i:5"><b>sana.moves</b>Renewal is next week na? Remind me</div>
+            </div>
+            <div class="store-layer">
+              <div class="sl-head"><span class="s-av sl-av">RM</span><div><b>Riya Menon</b><small>Today's orders</small></div></div>
+              <div class="sl-row" style="--i:0"><span>Ananya<small>Morning yoga, monthly</small></span><em>RM7K4</em></div>
+              <div class="sl-row" style="--i:1"><span>Kabir<small>Evening batch</small></span><em>RM2Q9</em></div>
+              <div class="sl-row" style="--i:2"><span>Meera<small>Back pain guide</small></span><em>RM5T3</em></div>
+              <div class="sl-row" style="--i:3"><span>Sana<small>Renewal, month 2</small></span><em>RM8W1</em></div>
+              <p class="sl-note">Every order has a code. Match it in your bank app. Done.</p>
+            </div>
+          </div>
+        </div>
+        <ol class="why-list">
+          <li style="--i:0"><span class="wl-n">01</span><div><h3>Screenshots to check</h3><p>Payments arrive as screenshots. Every one means opening your bank app, and one fake one means a free plan.</p></div></li>
+          <li style="--i:1"><span class="wl-n">02</span><div><h3>Renewals to chase</h3><p>Month two means a reminder to every client, by hand. The ones you forget quietly stop paying.</p></div></li>
+          <li style="--i:2"><span class="wl-n">03</span><div><h3>Strangers to convince</h3><p>New followers want proof you're real before they pay. A DM thread doesn't look like a business.</p></div></li>
+          <li class="wl-win" style="--i:3"><span class="wl-n">After</span><div><h3>One link. Every order with a code.</h3><p>Clients see your plans and prices, pay by UPI, and send you a code. No guesswork.</p></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <p class="wrap sample">Riya and her clients are samples, shown to explain the idea.</p>
+</section>
+
+<section class="sec types" id="coaches">
   <div class="wrap">
     <div class="sec-head">
-      <span class="kicker" data-reveal string="progress">Why coaches switch</span>
-      <h2 class="split" string="split" string-split="word[start]">Selling by DM shouldn't feel like a second job.</h2>
+      <span class="kicker" data-reveal string="progress">Who it's for</span>
+      <h2 class="split" string="split" string-split="word[start]">Built for coaches who sell by DM.</h2>
+      <p data-reveal string="progress">Some stores Thela can set up for you. The prices are only examples.</p>
     </div>
-    <div class="cards3" string="progress" string-id="fan" string-key="--fanp" string-enter-el="top" string-enter-vp="bottom" string-exit-el="top" string-exit-vp="center">
-      <article class="card">
-        <div class="bigic"><svg class="ic" aria-hidden="true"><use href="#i-img"/></svg></div>
-        <h3>Screenshots to check</h3>
-        <p>Every payment means opening your bank app to match a screenshot. One fake one, and you've given a plan away for free.</p>
-      </article>
-      <article class="card">
-        <div class="bigic"><svg class="ic" aria-hidden="true"><use href="#i-renew"/></svg></div>
-        <h3>Renewals to chase</h3>
-        <p>Month two means reminding every client by hand. The ones you forget quietly stop paying.</p>
-      </article>
-      <article class="card">
-        <div class="bigic"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></div>
-        <h3>New clients who don't know you yet</h3>
-        <p>A stranger on Instagram wants proof you're real before they pay. A clean store with your plans and prices does that for you.</p>
-      </article>
+    <div class="types-grid" string="progress" string-id="types" string-key="--types">
+      <article class="tile t-accent" style="--i:0"><h3>Yoga</h3><ul><li>Morning batch, monthly <b>₹1,499</b></li><li>Back pain guide <b>₹299</b></li></ul></article>
+      <article class="tile t-ink" style="--i:1"><h3>Strength</h3><ul><li>12-week plan <b>₹2,999</b></li><li>Form check call <b>₹799</b></li></ul></article>
+      <article class="tile t-soft" style="--i:2"><h3>Running</h3><ul><li>10K training plan <b>₹999</b></li><li>Weekly check-ins <b>₹1,200 a month</b></li></ul></article>
+      <article class="tile t-line" style="--i:3"><h3>Nutrition</h3><ul><li>Diet plan PDF <b>₹499</b></li><li>1:1 consult <b>₹999</b></li></ul></article>
+      <article class="tile t-ink" style="--i:4"><h3>Pilates</h3><ul><li>Mat batch, monthly <b>₹1,799</b></li><li>Recorded series <b>₹699</b></li></ul></article>
+      <article class="tile t-accent" style="--i:5"><h3>Dance</h3><ul><li>Choreo class <b>₹399</b></li><li>Monthly crew <b>₹1,299</b></li></ul></article>
     </div>
+  </div>
+</section>
+
+<section class="manifesto glow" data-tone="ink" string="progress" string-id="man" string-key="--man" string-enter-el="top" string-enter-vp="bottom" string-exit-el="bottom" string-exit-vp="center">
+  <div class="wrap">
+    <p class="man-text split" string="split" string-split="word[start]">Your clients should pay <span class="key">you,</span> not your DMs.</p>
+    <small class="man-sub">Thela turns the chat into a checkout.</small>
   </div>
 </section>
 
@@ -518,7 +670,7 @@ section { position: relative; }
 
 <section class="offer" id="offer">
   <div class="wrap">
-    <div class="offer-box" string="progress" string-id="offer" string-key="--offer" string-enter-el="top" string-enter-vp="bottom" string-exit-el="top" string-exit-vp="center">
+    <div class="offer-box glow" string="progress" string-id="offer" string-key="--offer" string-enter-el="top" string-enter-vp="bottom" string-exit-el="top" string-exit-vp="center">
       <div>
         <span class="kicker">Founding coaches</span>
         <h2>Free while we build it together.</h2>
@@ -612,6 +764,13 @@ section { position: relative; }
   </div>
 </section>
 
+<section class="sign" aria-hidden="true" string="progress" string-id="sign" string-key="--sign" string-enter-el="top" string-enter-vp="bottom" string-exit-el="bottom" string-exit-vp="bottom">
+  <div class="sign-mark">
+    <svg viewBox="0 0 64 64"><path fill="currentColor" d="M26 6h12v32q0 6 6 6h9v10H42Q26 54 26 38z"/><rect class="handle" fill="currentColor" x="6" y="19" width="42" height="10" rx="5"/></svg>
+    <span>thela</span>
+  </div>
+</section>
+
 </main>
 
 <footer class="footer">
@@ -653,9 +812,56 @@ section { position: relative; }
         stripDist();
         window.addEventListener('resize', stripDist);
         tune.start(60);
+        speedMarquee();
+        colourFlow();
+        cursorGlow();
       } catch (e) { document.documentElement.classList.remove('js-motion'); }
     };
     document.head.appendChild(s);
+  }
+
+  // Marquee that speeds up and leans with your scroll, then settles.
+  function speedMarquee() {
+    var last = window.scrollY, vel = 0, off = 0;
+    function frame() {
+      var y = window.scrollY, d = y - last; last = y;
+      vel += (d - vel) * 0.12;
+      off -= 0.7 + vel * 0.35;
+      var half = track.scrollWidth / 2;
+      if (half > 0) { if (off <= -half) off += half; if (off > 0) off -= half; }
+      var skew = Math.max(-14, Math.min(14, -vel * 0.5));
+      track.style.transform = 'translateX(' + off.toFixed(1) + 'px) skewX(' + skew.toFixed(2) + 'deg)';
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // Colour flow: the page background takes the colour of the band in the middle of the screen.
+  function colourFlow() {
+    if (!('IntersectionObserver' in window)) return;
+    var root = document.documentElement;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var tone = en.target.getAttribute('data-tone');
+        if (en.isIntersecting) { root.classList.add('tone-' + tone); }
+        else { root.classList.remove('tone-' + tone); }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px' });
+    document.querySelectorAll('[data-tone]').forEach(function (el) { io.observe(el); });
+  }
+
+  // A soft glow follows the cursor over dark blocks (mouse and trackpad only).
+  function cursorGlow() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    document.querySelectorAll('.glow').forEach(function (el) {
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+        el.style.setProperty('--glow', 1);
+      });
+      el.addEventListener('pointerleave', function () { el.style.setProperty('--glow', 0); });
+    });
   }
 
   // Application form: Netlify Forms. Without JS the browser posts it normally.
