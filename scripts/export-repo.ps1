@@ -14,7 +14,7 @@ $files = @(
   'pages',
   'stores\_template.html', 'stores\demo.json', 'stores\_site.json', 'stores\vendor',
   'scripts\build.ps1', 'scripts\serve.ps1', 'scripts\shots.js', 'scripts\store-test.js', 'scripts\export-repo.ps1',
-  'site\index.html', 'site\about.html', 'site\ad.html', 'site\media', 'site\s\demo',
+  'site\index.html', 'site\about.html', 'site\ad.html', 'site\media', 'site\s\demo', 'site\vendor',
   # Checkout: functions, their one package, Netlify settings, and the order and owner pages.
   'netlify', 'package.json', 'package-lock.json', 'netlify.toml', 'pages\order.html', 'pages\owner.html',
   'site\order.html', 'site\owner.html', 'tests\functions'

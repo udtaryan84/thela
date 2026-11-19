@@ -11,11 +11,11 @@ $head = @'
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Stop chasing screenshots. One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then â‚¹299 a month.">
+<meta name="description" content="Your coaching, sold from one link. Thela builds your store, sets up your plans and calls, and helps you sell. Free for founding fitness and yoga coaches.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Thela">
-<meta property="og:title" content="Thela: stop chasing screenshots">
-<meta property="og:description" content="One link for creators who sell by DM: buyers pay your own UPI, and Thela takes nothing from your sales. First month free, then â‚¹299 a month.">
+<meta property="og:title" content="Thela: your coaching, sold from one link">
+<meta property="og:description" content="We build your store, set up your plans and calls, and help you sell. Free for the first 10 fitness and yoga coaches.">
 <meta property="og:url" content="https://thela.site/">
 <meta name="google-site-verification" content="WaWYGEqhW8NoAbMPXi8j6talax29xJJHeKr7QV2ZBiA">
 '@

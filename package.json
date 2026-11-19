@@ -6,6 +6,7 @@
     "test": "node --test \"tests/functions/*.test.mjs\""
   },
   "dependencies": {
+    "@fiddle-digital/string-tune": "^1.2.7",
     "@netlify/blobs": "11.1.7"
   },
   "engines": {
