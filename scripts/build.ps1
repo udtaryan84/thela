@@ -35,7 +35,7 @@ $html = & $addClarity $html
 $tpl = Get-Content -Raw -Encoding UTF8 "$root\stores\_template.html"
 $qrlib = Get-Content -Raw -Encoding UTF8 "$root\stores\vendor\qrcode.js"
 $site = Get-Content -Raw -Encoding UTF8 "$root\stores\_site.json" | ConvertFrom-Json
-$built = @(); $problems = @(); $storePages = @{}; $storeData = @{}
+$built = @(); $problems = @(); $storePages = @{}; $storeData = @{}; $productPages = @{}
 foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -notlike '_*' }) {
   try { $s = Get-Content -Raw -Encoding UTF8 $f.FullName | ConvertFrom-Json }
   catch { $problems += "$($f.Name): not valid settings (check the commas, quote marks and brackets against demo.json)"; continue }
@@ -59,15 +59,37 @@ foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -not
   }
   $raw = Get-Content -Raw -Encoding UTF8 $f.FullName
   if ($raw -match '\[PLACEHOLDER') { $p += "still has [PLACEHOLDER] text" }
+  # Product pages (/s/<store>/p/<slug>/): every product gets a slug, from its title unless set.
+  $seen = @{}
+  foreach ($x in @($s.products)) {
+    $ps = if ($x.slug) { [string]$x.slug } else { ([string]$x.title).ToLower() -replace '[^a-z0-9]+', '-' -replace '^-+|-+$', '' }
+    if ($ps -notmatch '^[a-z0-9]+(-[a-z0-9]+)*$' -or $ps.Length -gt 60) { $p += "product '$($x.title)' needs a slug of lowercase letters, numbers and hyphens" }
+    elseif ($seen[$ps]) { $p += "two products would share the link /p/$ps/ (give one a different slug)" }
+    $seen[$ps] = $true
+    $x | Add-Member -NotePropertyName slug -NotePropertyValue $ps -Force
+    if ($x.description -and $x.description -isnot [string]) { $p += "product '$($x.title)' description must be text" }
+    if ($x.bullets -and @($x.bullets | Where-Object { $_ -isnot [string] }).Count) { $p += "product '$($x.title)' bullets must be a list of text" }
+    if ($x.testimonials -and @($x.testimonials | Where-Object { -not $_.name -or -not $_.text }).Count) { $p += "product '$($x.title)' testimonials need a name and text each" }
+    if ($x.image -and $x.image -notmatch '^/images/[A-Za-z0-9._/-]+$') { $p += "product '$($x.title)' image must be a file under /images/" }
+  }
   if ($p.Count) { $problems += "$($f.Name): " + ($p -join '; '); continue }
 
   $json = $s | ConvertTo-Json -Depth 10 -Compress   # escapes < > & ' so it is safe inside <script>
   $esc = { param($t) [Net.WebUtility]::HtmlEncode([string]$t) }
-  $page = $tpl.Replace('{{LANG}}', $(if ($s.lang -eq 'hi') { 'hi' } else { 'en' })).
-    Replace('{{TITLE}}', (& $esc "$($s.name) on Thela")).Replace('{{DESC}}', (& $esc $s.bio)).
-    Replace('{{ROBOTS}}', $(if ($s.demo -or $s.test) { '<meta name="robots" content="noindex">' } else { '' })).
-    Replace('{{QRLIB}}', $qrlib).Replace('{{SITE}}', ($site | ConvertTo-Json -Compress)).Replace('{{DATA}}', $json)
-  $storePages[$s.slug] = & $addClarity $page
+  $render = { param($title, $desc, $index)
+    $tpl.Replace('{{LANG}}', $(if ($s.lang -eq 'hi') { 'hi' } else { 'en' })).
+      Replace('{{TITLE}}', (& $esc $title)).Replace('{{DESC}}', (& $esc $desc)).
+      Replace('{{ROBOTS}}', $(if ($s.demo -or $s.test) { '<meta name="robots" content="noindex">' } else { '' })).
+      Replace('{{QRLIB}}', $qrlib).Replace('{{SITE}}', ($site | ConvertTo-Json -Compress)).Replace('{{PRODUCT}}', [string]$index).Replace('{{DATA}}', $json)
+  }
+  $storePages[$s.slug] = & $addClarity (& $render "$($s.name) on Thela" $s.bio -1)
+  $prods = @($s.products)
+  for ($n = 0; $n -lt $prods.Count; $n++) {
+    $x = $prods[$n]
+    $d = if ($x.description) { ([string]$x.description -replace '\s+', ' ').Trim() } elseif ($x.meta) { [string]$x.meta } else { [string]$s.bio }
+    if ($d.Length -gt 150) { $d = $d.Substring(0, 147).TrimEnd() + '...' }
+    $productPages["$($s.slug)/p/$($x.slug)"] = & $addClarity (& $render "$($x.title) by $($s.name) on Thela" $d $n)
+  }
   # Checkout stores also get store.json: the prices and vendor id the checkout functions trust.
   # Public settings only; delivery links never go here (they live in Netlify Blobs).
   if ($checkout) {
@@ -92,7 +114,11 @@ foreach ($slug in $storePages.Keys) {
   [IO.File]::WriteAllText("$root\site\s\$slug\index.html", $storePages[$slug], $utf8)
   if ($storeData[$slug]) { [IO.File]::WriteAllText("$root\site\s\$slug\store.json", $storeData[$slug], $utf8) }
 }
-Write-Host "Stores built: $($built -join ', ')"
+foreach ($key in $productPages.Keys) {
+  New-Item -ItemType Directory -Force "$root\site\s\$key" | Out-Null
+  [IO.File]::WriteAllText("$root\site\s\$key\index.html", $productPages[$key], $utf8)
+}
+Write-Host "Stores built: $($built -join ', ') ($($productPages.Count) product pages)"
 
 $pages = @()
 Get-ChildItem "$root\pages\*.html" | ForEach-Object {

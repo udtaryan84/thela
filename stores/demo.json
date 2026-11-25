@@ -27,22 +27,47 @@
       "title": "Morning yoga, monthly",
       "meta": "20 live classes a month",
       "price": 1499,
-      "monthly": true
+      "monthly": true,
+      "description": "Start your day loose instead of stiff. Five mornings a week we practise together on Zoom for 40 minutes: slow stretches for the spine, hips and shoulders, then simple breathing.\n\nMade for people who sit at a desk all day. No flexibility needed, and every pose has an easier version.",
+      "bullets": [
+        "20 live classes a month, 7 to 7:40 am, Monday to Friday",
+        "Recordings of every class, if you miss one",
+        "A WhatsApp group for questions",
+        "Cancel any month; you keep access till the month ends"
+      ]
     },
     {
       "title": "1:1 posture call",
       "meta": "45 minutes on Zoom",
-      "price": 999
+      "price": 999,
+      "description": "Show me how you sit and stand, and tell me where it hurts. In 45 minutes we find the habits behind your back or neck pain and build a short routine you can do at your desk.",
+      "bullets": [
+        "45 minute video call at a time that suits you",
+        "A 10 minute daily routine, written down for you",
+        "One follow-up message a week later"
+      ]
     },
     {
       "title": "Back pain guide",
       "meta": "PDF, yours to keep",
-      "price": 299
+      "price": 299,
+      "description": "The 12 stretches I give every new client with lower back pain, with photos, how long to hold each one, and what to skip if it hurts.",
+      "bullets": [
+        "28 page PDF with photos",
+        "A 15 minute morning and evening routine",
+        "Sent to you on WhatsApp after payment"
+      ]
     },
     {
       "title": "7-day mobility challenge",
       "meta": "7 recorded classes",
-      "price": 499
+      "price": 499,
+      "description": "One short class a day for a week. By day seven, bending to tie your shoes should feel easier.",
+      "bullets": [
+        "7 recorded classes, 15 to 20 minutes each",
+        "Watch any time, on any phone",
+        "A daily check-in message to keep you going"
+      ]
     }
   ]
 }

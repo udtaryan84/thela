@@ -149,6 +149,40 @@ img { display: block; max-width: 100%; }
 .tick { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); color: var(--ok); }
 .tick .i { width: 28px; height: 28px; stroke-width: 2.25; }
 .done #done-text { color: var(--ink); }
+
+/* Store cards link to their product page */
+.card-link { color: inherit; text-decoration: none; display: block; }
+.card-link:hover .p-title { text-decoration: underline; }
+.more { font-size: 14px; font-weight: 600; color: var(--accent); }
+
+/* Product page, like a Stan product page */
+.is-product .page { padding-bottom: 120px; }
+.back { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; color: var(--ink); text-decoration: none; font-weight: 600; font-size: 15px; }
+.back .avatar { width: 36px; height: 36px; font-size: 14px; }
+.hero-img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); }
+.hero-tile { aspect-ratio: 4 / 3; border-radius: 16px; background: var(--accent); color: var(--accent-ink); display: grid; align-content: end; gap: 10px; padding: 22px; overflow: hidden; }
+.hero-tile .i { width: 40px; height: 40px; }
+.hero-tile b { font: 800 clamp(1.8rem, 9vw, 2.6rem)/1 var(--brand); letter-spacing: -0.02em; }
+.p-head { display: grid; gap: 8px; }
+.chip { justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); font-size: 13px; font-weight: 600; }
+.chip .i { width: 16px; height: 16px; }
+.p-name { font-size: 26px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+.p-price { color: var(--ink); font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.p-price span { font-size: 15px; font-weight: 400; color: var(--muted); }
+.copy-block { display: grid; gap: 14px; color: var(--body); font-size: 16px; }
+.gets { display: grid; gap: 10px; }
+.gets li { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; }
+.gets .i { color: var(--ok); margin-top: 2px; }
+.buybar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 5; background: color-mix(in srgb, var(--card) 94%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); }
+.buybar-in { max-width: 480px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.buybar small { display: block; color: var(--muted); font-size: 12.5px; }
+.buybar .buy { min-width: 150px; }
+
+/* Get your own store (every store recruits the next coach) */
+.own { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; padding: 14px 16px; border: 1px dashed var(--line); border-radius: 16px; color: var(--ink); text-decoration: none; }
+.own svg { width: 30px; height: 30px; color: var(--accent); }
+.own b { display: block; font-weight: 700; }
+.own span { font-size: 14px; color: var(--muted); }
 </style>
 <script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,'clarity','script','zattyb8ew1');</script>
 </head>
@@ -2512,8 +2546,9 @@ var qrcode = function() {
 
 </script>
 <script>
-var STORE = {"slug":"checkouttest","test":true,"lang":"en","name":"Checkout Test Coach","prefix":"CT","bio":"Test store for Thela\u0027s new checkout. Payments here are in Cashfree\u0027s test mode; no real money moves.","city":"Delhi NCR","checkout":"cashfree","vendorId":"thelatestcoach","easySplit":false,"paidVia":"whatsapp","whatsapp":"917800033210","email":"","delivery":"straight after payment","refund":"This is a test store. Test payments can be refunded from the owner page.","products":[{"title":"Home workout plan","meta":"PDF, 12 pages","price":1,"type":"file"},{"title":"Yoga basics course","meta":"6 video lessons","price":2,"type":"course"},{"title":"1:1 coaching call","meta":"30 min, video","price":3,"type":"call"},{"title":"Monthly coaching","meta":"4 check-ins a month","price":1000,"monthly":true,"type":"plan"}]};
+var STORE = {"slug":"checkouttest","test":true,"lang":"en","name":"Checkout Test Coach","prefix":"CT","bio":"Test store for Thela\u0027s new checkout. Payments here are in Cashfree\u0027s test mode; no real money moves.","city":"Delhi NCR","checkout":"cashfree","vendorId":"thelatestcoach","easySplit":false,"paidVia":"whatsapp","whatsapp":"917800033210","email":"","delivery":"straight after payment","refund":"This is a test store. Test payments can be refunded from the owner page.","products":[{"title":"Home workout plan","meta":"PDF, 12 pages","price":1,"type":"file","slug":"home-workout-plan"},{"title":"Yoga basics course","meta":"6 video lessons","price":2,"type":"course","slug":"yoga-basics-course"},{"title":"1:1 coaching call","meta":"30 min, video","price":3,"type":"call","slug":"1-1-coaching-call"},{"title":"Monthly coaching","meta":"4 check-ins a month","price":1000,"monthly":true,"type":"plan","slug":"monthly-coaching"}]};
 var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
+var PRODUCT = -1; // -1 on the store page, the product's index on its own page (/p/<slug>/)
 (function () {
   var T = {
     en: {
@@ -2539,7 +2574,10 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
       errSdk: 'The payment window didn\x27t open. Check your internet and tap Pay again.',
       errForm: 'Please check your name, email and phone number.',
       assureCo: 'Secure payment by Cashfree. If {name} doesn\x27t deliver, Thela refunds you.',
-      coDelivery: 'Straight after payment, on the next page.', coPayments: 'Through Cashfree, a licensed payment company. {name} is paid weekly, not straight away.'
+      coDelivery: 'Straight after payment, on the next page.', coPayments: 'Through Cashfree, a licensed payment company. {name} is paid weekly, not straight away.',
+      details: 'See details', gets: 'What you get', kindFile: 'Guide', kindCourse: 'Course', kindCall: '1:1 call', kindPlan: 'Monthly plan',
+      payUpi: 'Pay by UPI from any app', payCo: 'Secure payment by Cashfree', backTo: '{name}\x27s store',
+      ownTitle: 'Get your own Thela store', ownText: 'Free for founding coaches. Set up for you.'
     },
     hi: {
       close: 'बंद करें', name: 'आपका नाम', email: 'आपका email', age: 'मेरी उम्र 18 साल या उससे ज़्यादा है, या माता-पिता pay कर रहे हैं।',
@@ -2564,7 +2602,10 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
       errSdk: 'Payment window नहीं खुली। अपना internet देखें और फिर से Pay दबाएँ।',
       errForm: 'कृपया अपना नाम, email और phone number जाँच लें।',
       assureCo: 'Cashfree से सुरक्षित payment. अगर {name} सामान नहीं भेजते, तो Thela आपको refund करेगा।',
-      coDelivery: 'Payment के तुरंत बाद, अगले page पर।', coPayments: 'Cashfree से, जो एक licensed payment company है। {name} को पैसा हर हफ़्ते मिलता है, तुरंत नहीं।'
+      coDelivery: 'Payment के तुरंत बाद, अगले page पर।', coPayments: 'Cashfree से, जो एक licensed payment company है। {name} को पैसा हर हफ़्ते मिलता है, तुरंत नहीं।',
+      details: 'Details देखें', gets: 'आपको क्या मिलेगा', kindFile: 'Guide', kindCourse: 'Course', kindCall: '1:1 call', kindPlan: 'Monthly plan',
+      payUpi: 'किसी भी UPI app से pay करें', payCo: 'Cashfree से सुरक्षित payment', backTo: '{name} का store',
+      ownTitle: 'अपना Thela store बनाएँ', ownText: 'Founding coaches के लिए free. हम set up करते हैं।'
     }
   };
   var t = T[STORE.lang] || T.en;
@@ -2590,27 +2631,57 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
   var first = STORE.name.split(' ')[0];
   var report = function (code) { if (STORE.demo) return '#'; return 'https://wa.me/' + SITE.whatsapp + '?text=' + encodeURIComponent(fill(t.reportMsg, { store: STORE.name, code: code || '' })); };
   var html = '';
+  var storeUrl = '/s/' + STORE.slug + '/';
+  function productUrl(p) { return storeUrl + 'p/' + p.slug + '/'; }
+  function buyWord(p) { var k = kind(p); return k === 'call' ? t.book : k === 'plan' ? t.join : t.buy; }
+  function kindLabel(k) { return { file: t.kindFile, course: t.kindCourse, call: t.kindCall, plan: t.kindPlan }[k] || t.kindFile; }
+  function priceHtml(p) { return rupees(p.price) + (p.monthly ? ' <span>' + esc(t.perMonth) + '</span>' : ''); }
+  var initials = STORE.name.split(' ').map(function (w) { return w.charAt(0); }).join('').slice(0, 2);
+  var avatar = STORE.photo ? '<img class="avatar" src="' + esc(STORE.photo) + '" alt="" width="72" height="72">' : '<span class="avatar avatar-initials" aria-hidden="true">' + esc(initials) + '</span>';
+  // Optional buyer reviews from the store file: [{ "name": "...", "text": "..." }]. Nothing shows without them.
+  function reviewsHtml(list, id) {
+    var rv = (list || []).filter(function (r) { return r && r.name && r.text; });
+    return rv.length ? '<section aria-labelledby="' + id + '"><h2 class="section-title" id="' + id + '">' + esc(t.reviews) + '</h2><ul class="reviews">' +
+      rv.map(function (r) { return '<li class="review"><b>' + esc(r.name) + '</b><p>' + esc(r.text) + '</p></li>'; }).join('') + '</ul></section>' : '';
+  }
+  // Every store ends with a small card that brings the next coach to Thela (with this store as the referrer).
+  var own = '<a class="own" href="https://thela.site/?ref=' + encodeURIComponent(STORE.slug) + '#apply">' +
+    '<svg viewBox="0 0 64 64" aria-hidden="true"><path fill="currentColor" d="M26 6h12v32q0 6 6 6h9v10H42Q26 54 26 38z"/><rect fill="currentColor" x="6" y="19" width="42" height="10" rx="5"/></svg>' +
+    '<div><b>' + esc(t.ownTitle) + '</b><span>' + esc(t.ownText) + '</span></div></a>';
   if (STORE.demo) html += '<p class="banner">' + esc(t.demo) + '</p>';
   if (STORE.test) html += '<p class="banner">' + esc(t.test) + '</p>';
-  html += '<header class="host"><div class="host-row">' + (STORE.photo ? '<img class="avatar" src="' + esc(STORE.photo) + '" alt="" width="72" height="72">' : '<span class="avatar avatar-initials" aria-hidden="true">' + esc(STORE.name.split(' ').map(function (w) { return w.charAt(0); }).join('').slice(0, 2)) + '</span>') +
-    '<div><h1 class="name">' + esc(STORE.name) + '</h1>' + (STORE.city ? '<p class="place">' + icon('pin') + esc(STORE.city) + '</p>' : '') + '</div></div>' +
-    (STORE.bio ? '<p class="bio">' + esc(STORE.bio) + '</p>' : '');
-  var links = (STORE.links || []).map(function (l) { return '<a href="' + esc(l.url) + '" rel="noopener">' + esc(l.label) + '</a>'; }).join('');
-  if (links) html += '<nav class="links" aria-label="Links">' + links + '</nav>';
-  html += '</header><ul class="products">';
-  STORE.products.forEach(function (p, i) {
-    var k = kind(p), word = k === 'call' ? t.book : k === 'plan' ? t.join : t.buy;
-    html += '<li class="card">' + (p.image ? '<img class="card-img" src="' + esc(p.image) + '" alt="" width="448" height="252" loading="lazy">' : '') +
-      '<div class="card-body"><div class="card-top">' + (p.image ? '' : '<span class="kind">' + icon(k === 'plan' || k === 'call' || k === 'course' ? k : 'file') + '</span>') +
-      '<div><h2 class="p-title">' + esc(p.title) + '</h2>' + (p.meta ? '<p class="p-meta">' + esc(p.meta) + '</p>' : '') + '</div></div>' +
-      '<div class="card-foot"><p class="price">' + rupees(p.price) + (p.monthly ? ' <span>' + esc(t.perMonth) + '</span>' : '') + '</p>' +
-      '<button class="buy" data-i="' + i + '" aria-label="' + esc(word + ': ' + p.title + ', ' + rupees(p.price)) + '">' + esc(word) + '</button></div></div></li>';
-  });
-  html += '</ul>';
-  // Optional buyer reviews from the store file: [{ "name": "...", "text": "..." }]. Nothing shows without them.
-  var reviews = (STORE.reviews || []).filter(function (r) { return r && r.name && r.text; });
-  if (reviews.length) html += '<section aria-labelledby="rv"><h2 class="section-title" id="rv">' + esc(t.reviews) + '</h2><ul class="reviews">' +
-    reviews.map(function (r) { return '<li class="review"><b>' + esc(r.name) + '</b><p>' + esc(r.text) + '</p></li>'; }).join('') + '</ul></section>';
+  var P = PRODUCT >= 0 ? STORE.products[PRODUCT] : null;
+  if (P) {
+    // Product page: image or a big title tile, the pitch, what you get, proof, then a sticky buy bar.
+    document.documentElement.classList.add('is-product');
+    var k = kind(P);
+    html += '<a class="back" href="' + storeUrl + '">' + avatar + '<span>' + esc(fill(t.backTo, { name: STORE.name })) + '</span></a>' +
+      (P.image ? '<img class="hero-img" src="' + esc(P.image) + '" alt="" width="480" height="360">' : '<div class="hero-tile" aria-hidden="true">' + icon(k === 'plan' || k === 'call' || k === 'course' ? k : 'file') + '<b>' + esc(kindLabel(k)) + '</b></div>') +
+      '<header class="p-head"><span class="chip">' + icon(k === 'plan' || k === 'call' || k === 'course' ? k : 'file') + esc(kindLabel(k)) + '</span>' +
+      '<h1 class="p-name">' + esc(P.title) + '</h1>' + (P.meta ? '<p class="p-meta">' + esc(P.meta) + '</p>' : '') +
+      '<p class="p-price">' + priceHtml(P) + '</p></header>';
+    var paras = String(P.description || '').split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+    if (paras.length) html += '<div class="copy-block">' + paras.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</div>';
+    if ((P.bullets || []).length) html += '<section aria-labelledby="gets"><h2 class="section-title" id="gets">' + esc(t.gets) + '</h2><ul class="gets">' +
+      P.bullets.map(function (b) { return '<li>' + icon('check') + '<span>' + esc(b) + '</span></li>'; }).join('') + '</ul></section>';
+    html += reviewsHtml(P.testimonials, 'rvp');
+  } else {
+    html += '<header class="host"><div class="host-row">' + avatar +
+      '<div><h1 class="name">' + esc(STORE.name) + '</h1>' + (STORE.city ? '<p class="place">' + icon('pin') + esc(STORE.city) + '</p>' : '') + '</div></div>' +
+      (STORE.bio ? '<p class="bio">' + esc(STORE.bio) + '</p>' : '');
+    var links = (STORE.links || []).map(function (l) { return '<a href="' + esc(l.url) + '" rel="noopener">' + esc(l.label) + '</a>'; }).join('');
+    if (links) html += '<nav class="links" aria-label="Links">' + links + '</nav>';
+    html += '</header><ul class="products">';
+    STORE.products.forEach(function (p, i) {
+      var k = kind(p), word = buyWord(p);
+      html += '<li class="card"><a class="card-link" href="' + productUrl(p) + '">' + (p.image ? '<img class="card-img" src="' + esc(p.image) + '" alt="" width="448" height="252" loading="lazy">' : '') +
+        '<div class="card-body"><div class="card-top">' + (p.image ? '' : '<span class="kind">' + icon(k === 'plan' || k === 'call' || k === 'course' ? k : 'file') + '</span>') +
+        '<div><h2 class="p-title">' + esc(p.title) + '</h2>' + (p.meta ? '<p class="p-meta">' + esc(p.meta) + '</p>' : '') + '</div></div></div></a>' +
+        '<div class="card-body" style="padding-top:0"><div class="card-foot"><p class="price">' + priceHtml(p) + '</p>' +
+        '<button class="buy" data-i="' + i + '" aria-label="' + esc(word + ': ' + p.title + ', ' + rupees(p.price)) + '">' + esc(word) + '</button></div></div></li>';
+    });
+    html += '</ul>' + reviewsHtml(STORE.reviews, 'rv');
+  }
   var contact = (STORE.whatsapp && !STORE.demo ? '<a href="https://wa.me/' + esc(STORE.whatsapp) + '">WhatsApp +' + esc(STORE.whatsapp.slice(0, 2) + ' ' + STORE.whatsapp.slice(2, 7) + ' ' + STORE.whatsapp.slice(7)) + '</a>' : '') +
     (STORE.email && !STORE.demo ? ' <a href="mailto:' + esc(STORE.email) + '">' + esc(STORE.email) + '</a>' : '');
   function fact(ic, label, body) { return '<li class="fact">' + icon(ic) + '<div><b>' + esc(label) + '</b>' + body + '</div></li>'; }
@@ -2620,11 +2691,16 @@ var SITE = {"email":"aryan200284@gmail.com","whatsapp":"917800033210"};
     fact('wallet', t.paymentsLabel, esc(CO ? fill(t.coPayments, { name: first }) : fill(t.payments, { payee: STORE.upi.payee, name: first }))) +
     fact('user', t.soldBy, esc(STORE.name + ', ' + STORE.city) + (contact ? '<br>' + contact : '')) +
     fact('chat', t.help, '<a href="' + esc(report()) + '" rel="noopener">' + esc(t.helpLink) + '</a>') +
-    '</ul></section>' +
+    '</ul></section>' + own +
     '<footer class="footer"><a class="mark" href="/" aria-label="' + esc(t.madeWith) + ' Thela"><span>' + esc(t.madeWith) + '</span>' +
     '<svg viewBox="0 0 64 64" width="20" height="20" aria-hidden="true" style="color:var(--accent)"><path fill="currentColor" d="M26 6h12v32q0 6 6 6h9v10H42Q26 54 26 38z"/><rect fill="currentColor" x="6" y="19" width="42" height="10" rx="5"/></svg><span class="word">thela</span></a>' +
     '<span aria-hidden="true">&middot;</span><a href="/about.html#privacy">' + esc(t.privacy) + '</a><span aria-hidden="true">&middot;</span>' +
     '<a href="mailto:' + esc(SITE.email) + '?subject=' + encodeURIComponent('Report: ' + STORE.slug) + '">' + esc(t.report) + '</a></footer>';
+  if (P) {
+    // Sticky buy bar: price and the buy button stay in reach while the buyer reads.
+    html += '<div class="buybar"><div class="buybar-in"><div><p class="price">' + priceHtml(P) + '</p><small>' + esc(CO ? t.payCo : t.payUpi) + '</small></div>' +
+      '<button class="buy" data-i="' + PRODUCT + '" aria-label="' + esc(buyWord(P) + ': ' + P.title + ', ' + rupees(P.price)) + '">' + esc(buyWord(P)) + '</button></div></div>';
+  }
   $('page').innerHTML = html;
 
   // Static labels in the sheet

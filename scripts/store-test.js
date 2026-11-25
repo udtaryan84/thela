@@ -3,7 +3,7 @@
 async page => {
   // Use whatever port the preview server got (the page opened with playwright-cli open <url>).
   const base = page.url().startsWith('http') ? new URL(page.url()).origin : 'http://localhost:5173';
-  const out = 'flow/2026-10-17-website-update/proof/'; // change to the current run's proof/ folder
+  const out = 'design/proof/store/'; // change to the current run's proof/ folder
   const r = {};
   await page.setViewportSize({ width: 360, height: 780 });
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
@@ -13,7 +13,7 @@ async page => {
   r.noSideScroll = await page.evaluate(() => document.documentElement.scrollWidth <= 360);
   await page.screenshot({ path: out + 'store-demo.png', fullPage: true });
 
-  await page.click('.buy >> nth=2');                      // the ₹999 call
+  await page.click('.buy >> nth=2');                      // the ₹299 guide
   await page.click('#to-pay');                              // nothing filled in
   r.emptyError = await page.textContent('#err');
   await page.fill('#b-name', 'Asha');
@@ -39,6 +39,33 @@ async page => {
   r.waLink = decodeURIComponent(await page.getAttribute('#send-msg', 'href'));
   await page.screenshot({ path: out + 'store-done.png' });
   r.orderClearedAfterPaid = await page.evaluate(() => localStorage.getItem('thela-order-demo') === null);
+
+  // Store cards link to product pages, and every store carries the referral card.
+  await page.goto(base + '/s/demo/');
+  r.cardLinksToProduct = (await page.getAttribute('.card-link >> nth=0', 'href')) === '/s/demo/p/morning-yoga-monthly/';
+  r.referralLink = (await page.getAttribute('.own', 'href')) === 'https://thela.site/?ref=demo#apply';
+
+  // Product page opened straight from a link: sticky bar, no fake reviews, order reaches the QR.
+  await page.evaluate(() => localStorage.clear());
+  await page.goto(base + '/s/demo/p/morning-yoga-monthly/');
+  r.productNoSideScroll = await page.evaluate(() => document.documentElement.scrollWidth <= 360);
+  r.productNoReviews = await page.locator('#rvp').count() === 0;
+  r.stickyBarVisible = await page.locator('.buybar .buy').isVisible();
+  await page.screenshot({ path: out + 'product-demo.png', fullPage: true });
+  await page.click('.buybar .buy');
+  await page.fill('#b-name', 'Asha');
+  await page.fill('#b-email', 'asha@example.com');
+  await page.check('#b-age');
+  await page.click('#to-pay');
+  r.productReachesQr = await page.locator('#qr svg').count() === 1;
+  r.productAmount = await page.textContent('#sheet-amount');
+  await page.click('#cancel-order');
+
+  // Landing page keeps a clean referral code and drops a bad one.
+  await page.goto(base + '/?ref=demo#apply');
+  r.refKept = (await page.inputValue('#f-ref')) === 'demo';
+  await page.goto(base + '/?ref=%3Cscript%3E#apply');
+  r.badRefDropped = (await page.inputValue('#f-ref')) === '';
 
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
   await page.goto(base + '/s/demo/');

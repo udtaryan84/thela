@@ -721,6 +721,7 @@ html.tone-ink body { background-color: var(--ink); }
     </div>
     <form class="apply" id="apply-form" name="founding-creator" method="POST" data-netlify="true" netlify-honeypot="bot-field" data-reveal string="progress">
       <input type="hidden" name="form-name" value="founding-creator">
+      <input type="hidden" name="ref" id="f-ref">
       <p class="hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
       <div class="fields">
         <div class="field"><label for="f-name">Your name</label><input id="f-name" name="name" required autocomplete="name"></div>
@@ -853,6 +854,10 @@ html.tone-ink body { background-color: var(--ink); }
       el.addEventListener('pointerleave', function () { el.style.setProperty('--glow', 0); });
     });
   }
+
+  // Referral: a coach store links here with ?ref=<store>; keep only a clean store name.
+  var ref = new URLSearchParams(location.search).get('ref');
+  if (ref && /^[a-z0-9]{3,30}$/.test(ref)) document.getElementById('f-ref').value = ref;
 
   // Application form: Netlify Forms. Without JS the browser posts it normally.
   // Other hosts (the Claude preview, the local server) cannot receive it, so say so.
