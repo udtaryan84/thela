@@ -63,13 +63,14 @@ foreach ($f in Get-ChildItem "$root\stores\*.json" | Where-Object { $_.Name -not
   $seen = @{}
   foreach ($x in @($s.products)) {
     $ps = if ($x.slug) { [string]$x.slug } else { ([string]$x.title).ToLower() -replace '[^a-z0-9]+', '-' -replace '^-+|-+$', '' }
-    if ($ps -notmatch '^[a-z0-9]+(-[a-z0-9]+)*$' -or $ps.Length -gt 60) { $p += "product '$($x.title)' needs a slug of lowercase letters, numbers and hyphens" }
+    if ($ps -cnotmatch '^[a-z0-9]+(-[a-z0-9]+)*$' -or $ps.Length -gt 60) { $p += "product '$($x.title)' needs a slug of lowercase letters, numbers and hyphens" }
     elseif ($seen[$ps]) { $p += "two products would share the link /p/$ps/ (give one a different slug)" }
     $seen[$ps] = $true
     $x | Add-Member -NotePropertyName slug -NotePropertyValue $ps -Force
     if ($x.description -and $x.description -isnot [string]) { $p += "product '$($x.title)' description must be text" }
-    if ($x.bullets -and @($x.bullets | Where-Object { $_ -isnot [string] }).Count) { $p += "product '$($x.title)' bullets must be a list of text" }
-    if ($x.testimonials -and @($x.testimonials | Where-Object { -not $_.name -or -not $_.text }).Count) { $p += "product '$($x.title)' testimonials need a name and text each" }
+    # A single string or object (not a [ ] list) would pass the item check and blank the page, so the list shape is checked too.
+    if ($x.bullets -and ($x.bullets -isnot [array] -or @($x.bullets | Where-Object { $_ -isnot [string] }).Count)) { $p += "product '$($x.title)' bullets must be a list of text" }
+    if ($x.testimonials -and ($x.testimonials -isnot [array] -or @($x.testimonials | Where-Object { -not $_.name -or -not $_.text }).Count)) { $p += "product '$($x.title)' testimonials must be a list, each with a name and text" }
     if ($x.image -and $x.image -notmatch '^/images/[A-Za-z0-9._/-]+$') { $p += "product '$($x.title)' image must be a file under /images/" }
   }
   if ($p.Count) { $problems += "$($f.Name): " + ($p -join '; '); continue }

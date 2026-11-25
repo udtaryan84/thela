@@ -342,7 +342,7 @@ var PRODUCT = {{PRODUCT}}; // -1 on the store page, the product's index on its o
   var avatar = STORE.photo ? '<img class="avatar" src="' + esc(STORE.photo) + '" alt="" width="72" height="72">' : '<span class="avatar avatar-initials" aria-hidden="true">' + esc(initials) + '</span>';
   // Optional buyer reviews from the store file: [{ "name": "...", "text": "..." }]. Nothing shows without them.
   function reviewsHtml(list, id) {
-    var rv = (list || []).filter(function (r) { return r && r.name && r.text; });
+    var rv = (Array.isArray(list) ? list : []).filter(function (r) { return r && r.name && r.text; });
     return rv.length ? '<section aria-labelledby="' + id + '"><h2 class="section-title" id="' + id + '">' + esc(t.reviews) + '</h2><ul class="reviews">' +
       rv.map(function (r) { return '<li class="review"><b>' + esc(r.name) + '</b><p>' + esc(r.text) + '</p></li>'; }).join('') + '</ul></section>' : '';
   }
@@ -364,7 +364,7 @@ var PRODUCT = {{PRODUCT}}; // -1 on the store page, the product's index on its o
       '<p class="p-price">' + priceHtml(P) + '</p></header>';
     var paras = String(P.description || '').split(/\n\s*\n/).map(function (s) { return s.trim(); }).filter(Boolean);
     if (paras.length) html += '<div class="copy-block">' + paras.map(function (s) { return '<p>' + esc(s) + '</p>'; }).join('') + '</div>';
-    if ((P.bullets || []).length) html += '<section aria-labelledby="gets"><h2 class="section-title" id="gets">' + esc(t.gets) + '</h2><ul class="gets">' +
+    if (Array.isArray(P.bullets) && P.bullets.length) html += '<section aria-labelledby="gets"><h2 class="section-title" id="gets">' + esc(t.gets) + '</h2><ul class="gets">' +
       P.bullets.map(function (b) { return '<li>' + icon('check') + '<span>' + esc(b) + '</span></li>'; }).join('') + '</ul></section>';
     html += reviewsHtml(P.testimonials, 'rvp');
   } else {
